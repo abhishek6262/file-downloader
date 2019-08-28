@@ -37,6 +37,32 @@ class Home extends React.Component<Props, States> {
     this.handleSourceFileVerificationSuccess = this.handleSourceFileVerificationSuccess.bind(this)
   }
 
+  private handleCancelSourceFileLink() {
+    this.setState({ sourceFile: Home.SOURCE_FILE_STUB })
+  }
+
+  private handleContinueWithSourceFileLink() {
+    // 
+
+    const { sourceFile } = this.state
+
+    sourceFile.status = 'pending'
+
+    this.setState({ sourceFile })
+  }
+
+  private handleSourceFileUnlockSuccess(downloadLink: string) {
+    const { sourceFile } = this.state
+
+    sourceFile.downloadLink = downloadLink
+
+    this.setState({ sourceFile })
+  }
+
+  private handleSourceFileVerificationSuccess(sourceFile: ISourceFile) {
+    this.setState({ sourceFile })
+  }
+
   render() {
     let content: JSX.Element
 
@@ -100,32 +126,6 @@ class Home extends React.Component<Props, States> {
         `}</style>
       </>
     )
-  }
-
-  private handleCancelSourceFileLink() {
-    this.setState({ sourceFile: Home.SOURCE_FILE_STUB })
-  }
-
-  private handleContinueWithSourceFileLink() {
-    // 
-
-    const { sourceFile } = this.state
-
-    sourceFile.status = 'pending'
-
-    this.setState({ sourceFile })
-  }
-
-  private handleSourceFileUnlockSuccess(downloadLink: string) {
-    const { sourceFile } = this.state
-
-    sourceFile.downloadLink = downloadLink
-
-    this.setState({ sourceFile })
-  }
-
-  private handleSourceFileVerificationSuccess(sourceFile: ISourceFile) {
-    this.setState({ sourceFile })
   }
 }
 

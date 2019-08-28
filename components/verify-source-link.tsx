@@ -28,6 +28,31 @@ class VerifySourceLink extends React.Component<Props, States> {
     this.verifySourceFile = this.verifySourceFile.bind(this)
   }
 
+  private handleSourceLinkChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const errorMessage = ''
+    const sourceLink = e.target.value
+
+    this.setState({ errorMessage, sourceLink })
+  }
+
+  private async verifySourceFile(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+
+    if (this.state.sourceLink.length < 1) {
+      this.setState({ errorMessage: VerifySourceLink.ERROR_NO_LINK })
+
+      return
+    }
+
+    try {
+      const resp = await verifySourceLink(this.state.sourceLink)
+
+      this.props.handleSourceFileVerificationSuccess(resp.data)
+    } catch (err) {
+      this.setState({ errorMessage: VerifySourceLink.ERROR_INVALID_LINK })
+    }
+  }
+
   render() {
     return (
       <div className="bg-white shadow-md rounded mx-auto px-8 py-6 w-full">
@@ -52,31 +77,6 @@ class VerifySourceLink extends React.Component<Props, States> {
         </form>
       </div>
     )
-  }
-
-  private handleSourceLinkChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const errorMessage = ''
-    const sourceLink = e.target.value
-
-    this.setState({ errorMessage, sourceLink })
-  }
-
-  private async verifySourceFile(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-
-    if (this.state.sourceLink.length < 1) {
-      this.setState({ errorMessage: VerifySourceLink.ERROR_NO_LINK })
-
-      return
-    }
-
-    try {
-      const resp = await verifySourceLink(this.state.sourceLink)
-
-      this.props.handleSourceFileVerificationSuccess(resp.data)
-    } catch (err) {
-      this.setState({ errorMessage: VerifySourceLink.ERROR_INVALID_LINK })
-    }
   }
 }
 
