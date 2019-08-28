@@ -40,15 +40,15 @@ class Home extends React.Component<Props, States> {
   render() {
     let content: JSX.Element
 
-    if (this.state.sourceFile.status === 'verified') {
+    if (this.state.sourceFile.status === 'pending') {
+      content = <UnlockSourceLink
+        handleSourceFileUnlockSuccess={this.handleSourceFileUnlockSuccess}
+        sourceFile={this.state.sourceFile}
+      />
+    } else if (this.state.sourceFile.status === 'verified') {
       content = <FileMetaInfo
         handleCancelSourceFileLink={this.handleCancelSourceFileLink}
         handleContinueWithSourceFileLink={this.handleContinueWithSourceFileLink}
-        sourceFile={this.state.sourceFile}
-      />
-    } else if (this.state.sourceFile.status === 'pending') {
-      content = <UnlockSourceLink
-        handleSourceFileUnlockSuccess={this.handleSourceFileUnlockSuccess}
         sourceFile={this.state.sourceFile}
       />
     } else {
