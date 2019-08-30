@@ -8,6 +8,6 @@ export default interface ISourceFile {
   size: number
   status: sourceFileStatus
   type: string
-  created_at: string,
-  updated_at: string,
+  created_at: string
+  updated_at: string
 }

@@ -28,7 +28,7 @@ const FileMetaInfo: FunctionComponent<Props> = ({ handleCancelSourceFileLink, ha
           <p className="truncate max-w-xs text-gray-600 mb-2">{sourceFile.sourceLink}</p>
 
           <div>
-            <p className="inline-block mr-2"><span className="text-gray-600">File size:</span> <span className="font-semibold">{sourceFile.size} MB</span></p>
+            <p className="inline-block mr-2"><span className="text-gray-600">File size:</span> <span className="font-semibold">{(sourceFile.size / 1000).toFixed(2)} MB</span></p>
             <p className="inline-block"><span className="text-gray-600">File type:</span> <span className="font-semibold">{sourceFile.type}</span></p>
           </div>
         </div>

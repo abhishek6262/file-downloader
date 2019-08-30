@@ -1,7 +1,7 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLink } from '@fortawesome/free-solid-svg-icons'
-import { verifySourceLink } from '../pages/api/util/Source'
+import Source from '../pages/api/util/Source'
 
 interface Props {
   handleSourceFileVerificationSuccess: Function
@@ -13,7 +13,6 @@ interface States {
 }
 
 class VerifySourceLink extends React.Component<Props, States> {
-  static readonly ERROR_INVALID_LINK: string = 'Invalid source URL. Failed to find any source file.'
   static readonly ERROR_NO_LINK: string = 'Please enter a URL to proceed.'
 
   constructor(props: Props) {
@@ -45,11 +44,11 @@ class VerifySourceLink extends React.Component<Props, States> {
     }
 
     try {
-      const resp = await verifySourceLink(this.state.sourceLink)
+      const res = await Source.verifySourceLink(this.state.sourceLink)
 
-      this.props.handleSourceFileVerificationSuccess(resp.data)
+      this.props.handleSourceFileVerificationSuccess(res.data)
     } catch (err) {
-      this.setState({ errorMessage: VerifySourceLink.ERROR_INVALID_LINK })
+      this.setState({ errorMessage: err.response.data.message })
     }
   }
 
