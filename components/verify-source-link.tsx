@@ -9,6 +9,7 @@ interface Props {
 
 interface States {
   errorMessage: string
+  isProcessing: boolean
   sourceLink: string
 }
 
@@ -20,6 +21,7 @@ class VerifySourceLink extends React.Component<Props, States> {
 
     this.state = {
       errorMessage: '',
+      isProcessing: false,
       sourceLink: '',
     }
 
@@ -37,8 +39,13 @@ class VerifySourceLink extends React.Component<Props, States> {
   private async verifySourceFile(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
+    this.setState({ isProcessing: true })
+
     if (this.state.sourceLink.length < 1) {
-      this.setState({ errorMessage: VerifySourceLink.ERROR_NO_LINK })
+      this.setState({
+        errorMessage: VerifySourceLink.ERROR_NO_LINK,
+        isProcessing: false,
+      })
 
       return
     }
@@ -49,6 +56,8 @@ class VerifySourceLink extends React.Component<Props, States> {
       this.props.handleSourceFileVerificationSuccess(res.data)
     } catch (err) {
       this.setState({ errorMessage: err.response.data.message })
+    } finally {
+      this.setState({ isProcessing: false })
     }
   }
 
@@ -67,9 +76,9 @@ class VerifySourceLink extends React.Component<Props, States> {
             </div>
 
             <div className="w-full lg:w-3/12 lg:pl-3">
-              <button type="submit" className="bg-orange-300 hover:bg-orange-400 text-gray-800 font-bold lg:mt-6 py-3 px-4 rounded inline-flex justify-center items-center w-full">
+              <button type="submit" className="bg-orange-300 hover:bg-orange-400 text-gray-800 font-bold lg:mt-6 py-3 px-4 rounded inline-flex justify-center items-center w-full" disabled={this.state.isProcessing}>
                 <FontAwesomeIcon icon={faLink} />
-                <span className="ml-2">Process</span>
+                <span className="ml-2">{this.state.isProcessing ? 'Processing ...' : 'Process'}</span>
               </button>
             </div>
           </div>
