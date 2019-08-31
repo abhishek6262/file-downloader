@@ -1,7 +1,7 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLink } from '@fortawesome/free-solid-svg-icons'
-import Source from '../pages/api/util/Source'
+import { verifySourceLink } from '../util/api'
 
 interface Props {
   handleSourceFileVerificationSuccess: Function
@@ -51,7 +51,7 @@ class VerifySourceLink extends React.Component<Props, States> {
     }
 
     try {
-      const res = await Source.verifySourceLink(this.state.sourceLink)
+      const res = await verifySourceLink(this.state.sourceLink)
 
       this.props.handleSourceFileVerificationSuccess(res.data)
     } catch (err) {

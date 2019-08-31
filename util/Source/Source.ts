@@ -1,7 +1,7 @@
 import axios from 'axios'
 import path from 'path'
 import url from 'url'
-import ISourceFileRes from "../interface/ISourceFileRes"
+import ISourceFileRes from "./interface/ISourceFileRes"
 
 export default class Source {
   static readonly ERROR_EMPTY_URL: string = 'The source URL can not be empty.'
@@ -64,14 +64,6 @@ export default class Source {
         resolve(true)
       } catch (err) {
         resolve(false)
-      }
-    })
-  }
-
-  static verifySourceLink(sourceLink: string) {
-    return axios.get('/api/source/verify', {
-      params: {
-        link: sourceLink
       }
     })
   }

@@ -1,6 +1,6 @@
 import React from 'react'
 import Head from 'next/head'
-import ISourceFile from './api/interface/ISourceFile'
+import ISourceFile from '../util/Source/interface/ISourceFile'
 import FileMetaInfo from '../components/file-meta-info'
 import UnlockSourceLink from '../components/unlock-source-link'
 import VerifySourceLink from '../components/verify-source-link'

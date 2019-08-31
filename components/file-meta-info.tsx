@@ -7,7 +7,7 @@ import {
   faTimesCircle,
   faVideo,
 } from '@fortawesome/free-solid-svg-icons'
-import ISourceFile from '../pages/api/interface/ISourceFile'
+import ISourceFile from '../util/Source/interface/ISourceFile'
 
 interface Props {
   handleCancelSourceFileLink: Function

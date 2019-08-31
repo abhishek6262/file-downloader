@@ -1,5 +1,5 @@
 import React from 'react'
-import ISourceFile from '../pages/api/interface/ISourceFile'
+import ISourceFile from '../util/Source/interface/ISourceFile'
 import NewSourceLink from './new-source-link'
 import EmailNotification from './email-notification'
 
