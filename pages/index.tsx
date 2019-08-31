@@ -1,6 +1,7 @@
 import React from 'react'
 import Head from 'next/head'
 import ISourceFile from '../util/Source/interface/ISourceFile'
+import SOURCE_FILE_STUB from '../util/Source/Stub'
 import FileMetaInfo from '../components/file-meta-info'
 import UnlockSourceLink from '../components/unlock-source-link'
 import VerifySourceLink from '../components/verify-source-link'
@@ -12,23 +13,11 @@ interface States {
 }
 
 class Home extends React.Component<Props, States> {
-  static readonly SOURCE_FILE_STUB: ISourceFile = {
-    id: -1,
-    name: '',
-    downloadLink: '',
-    sourceLink: '',
-    size: 0,
-    status: 'init',
-    type: '',
-    created_at: '',
-    updated_at: '',
-  }
-
   constructor(props: Props) {
     super(props)
 
     this.state = {
-      sourceFile: Home.SOURCE_FILE_STUB
+      sourceFile: SOURCE_FILE_STUB
     }
 
     this.handleSourceFileUnlockCancelled = this.handleSourceFileUnlockCancelled.bind(this)
@@ -38,7 +27,7 @@ class Home extends React.Component<Props, States> {
   }
 
   private handleSourceFileUnlockCancelled() {
-    this.setState({ sourceFile: Home.SOURCE_FILE_STUB })
+    this.setState({ sourceFile: SOURCE_FILE_STUB })
   }
 
   private handleSourceFileUnlockQueued(sourceFile: ISourceFile) {
