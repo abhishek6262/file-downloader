@@ -31,23 +31,17 @@ class Home extends React.Component<Props, States> {
       sourceFile: Home.SOURCE_FILE_STUB
     }
 
-    this.handleCancelSourceFileLink = this.handleCancelSourceFileLink.bind(this)
-    this.handleContinueWithSourceFileLink = this.handleContinueWithSourceFileLink.bind(this)
+    this.handleSourceFileUnlockCancelled = this.handleSourceFileUnlockCancelled.bind(this)
+    this.handleSourceFileUnlockQueued = this.handleSourceFileUnlockQueued.bind(this)
     this.handleSourceFileUnlockSuccess = this.handleSourceFileUnlockSuccess.bind(this)
     this.handleSourceFileVerificationSuccess = this.handleSourceFileVerificationSuccess.bind(this)
   }
 
-  private handleCancelSourceFileLink() {
+  private handleSourceFileUnlockCancelled() {
     this.setState({ sourceFile: Home.SOURCE_FILE_STUB })
   }
 
-  private handleContinueWithSourceFileLink() {
-    // 
-
-    const { sourceFile } = this.state
-
-    sourceFile.status = 'pending'
-
+  private handleSourceFileUnlockQueued(sourceFile: ISourceFile) {
     this.setState({ sourceFile })
   }
 
@@ -73,8 +67,8 @@ class Home extends React.Component<Props, States> {
       />
     } else if (this.state.sourceFile.status === 'verified') {
       content = <FileMetaInfo
-        handleCancelSourceFileLink={this.handleCancelSourceFileLink}
-        handleContinueWithSourceFileLink={this.handleContinueWithSourceFileLink}
+        handleSourceFileUnlockCancelled={this.handleSourceFileUnlockCancelled}
+        handleSourceFileUnlockQueued={this.handleSourceFileUnlockQueued}
         sourceFile={this.state.sourceFile}
       />
     } else {
