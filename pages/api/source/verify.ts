@@ -4,20 +4,15 @@ import Source from '../../../util/Source/Source'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => { 
   try {
-    const sourceLink: string         = await Source.getLink(<string> req.query.link)
-    const sourceFileRes: ISourceFile = await Source.getFileInfo(sourceLink)
+    const sourceLink: string          = await Source.getLink(<string> req.query.link)
+    const sourceFileInfo: ISourceFile = await Source.getFileInfo(sourceLink)
+    const sourceFile: ISourceFile     = Object.assign({}, sourceFileInfo)
 
-    const sourceFile: ISourceFile = {
-      id: -1,
-      downloadLink: '',
-      sourceLink,
-      name: sourceFileRes.name,
-      size: sourceFileRes.size,
-      status: 'verified',
-      type: sourceFileRes.type,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    }
+    sourceFile.id -1
+    sourceFile.downloadLink = ''
+    sourceFile.status = 'verified'
+    sourceFile.created_at = new Date().toISOString()
+    sourceFile.updated_at = new Date().toISOString()
 
     res.status(200).json(sourceFile)
   } catch (err) {
