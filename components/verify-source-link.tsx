@@ -76,7 +76,7 @@ class VerifySourceLink extends React.Component<Props, States> {
             </div>
 
             <div className="w-full lg:w-3/12 lg:pl-3">
-              <button type="submit" className="bg-orange-300 hover:bg-orange-400 text-gray-800 font-bold lg:mt-6 py-3 px-4 rounded inline-flex justify-center items-center w-full" disabled={this.state.isProcessing}>
+              <button type="submit" className={(this.state.isProcessing ? "bg-orange-200" : "bg-orange-300") + " hover:bg-orange-400 text-gray-800 font-bold lg:mt-6 py-3 px-4 rounded inline-flex justify-center items-center w-full"} disabled={this.state.isProcessing}>
                 <FontAwesomeIcon icon={faLink} />
                 <span className="ml-2">{this.state.isProcessing ? 'Processing ...' : 'Process'}</span>
               </button>
