@@ -1,7 +1,7 @@
 import axios from 'axios'
 import path from 'path'
 import url from 'url'
-import ISourceFileRes from "./interface/ISourceFileRes"
+import ISourceFile from "./interface/ISourceFile"
 
 export default class Source {
   static readonly ERROR_EMPTY_URL: string = 'The source URL can not be empty.'
@@ -23,7 +23,7 @@ export default class Source {
     })
   }
 
-  static getFileInfo(sourceLink: string): Promise<ISourceFileRes> {
+  static getFileInfo(sourceLink: string): Promise<ISourceFile> {
     return new Promise(async (resolve, reject) => {
       try {
         const res     = await axios.head(sourceLink)

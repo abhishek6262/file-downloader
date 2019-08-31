@@ -1,12 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import ISourceFile from '../../../util/Source/interface/ISourceFile'
-import ISourceFileRes from '../../../util/Source/interface/ISourceFileRes'
 import Source from '../../../util/Source/Source'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => { 
   try {
-    const sourceLink: string            = await Source.getLink(<string> req.query.link)
-    const sourceFileRes: ISourceFileRes = await Source.getFileInfo(sourceLink)
+    const sourceLink: string         = await Source.getLink(<string> req.query.link)
+    const sourceFileRes: ISourceFile = await Source.getFileInfo(sourceLink)
 
     const sourceFile: ISourceFile = {
       id: -1,
