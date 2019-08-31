@@ -14,19 +14,12 @@ export default class Source {
         return
       }
 
-      if (await Source.fileExists(sourceLink)) {
-        resolve(sourceLink)
+      if (! await Source.fileExists(sourceLink)) {
+        reject(Source.ERROR_NO_SOURCE)
+        return
       }
 
-      reject(Source.ERROR_NO_SOURCE)
-
-      // try {
-      //   const originalSourceLink = await Source.followToSourceFile(sourceLink)
-
-      //   resolve(originalSourceLink)
-      // } catch (err) {
-      //   reject(err.message || err)
-      // }
+      resolve(sourceLink)
     })
   }
 
@@ -56,13 +49,6 @@ export default class Source {
       }
     })
   }
-
-  // static followToSourceFile(sourceLink: string): Promise<string> {
-  //   return new Promise((resolve, reject) => {
-  //     // TODO: Reach to the source from the supplied link.
-  //     reject(Source.ERROR_NO_SOURCE)
-  //   })
-  // }
 
   static fileExists(sourceLink: string): Promise<boolean> {
     return new Promise(async (resolve) => {
