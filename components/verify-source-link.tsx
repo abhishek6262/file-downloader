@@ -39,7 +39,10 @@ class VerifySourceLink extends React.Component<Props, States> {
   private async verifySourceFile(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
-    this.setState({ isProcessing: true })
+    this.setState({
+      errorMessage: '',
+      isProcessing: true
+    })
 
     if (this.state.sourceLink.length < 1) {
       this.setState({
