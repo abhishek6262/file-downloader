@@ -53,13 +53,7 @@ export default class Source {
   static fileExists(sourceLink: string): Promise<boolean> {
     return new Promise(async (resolve) => {
       try {
-        const res     = await axios.head(sourceLink)
-        const resType = res.headers['content-type'].split('/')[0]
-
-        if (res.status !== 200 || resType === 'text') {
-          resolve(false)
-          return
-        }
+        await Source.getFileInfo(sourceLink)
 
         resolve(true)
       } catch (err) {
