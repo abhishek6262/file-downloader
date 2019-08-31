@@ -1,6 +1,6 @@
 import React from 'react'
 import Head from 'next/head'
-import ISourceFile from './api/interface/ISourceFile'
+import ISourceFile from '../util/Source/interface/ISourceFile'
 import FileMetaInfo from '../components/file-meta-info'
 import UnlockSourceLink from '../components/unlock-source-link'
 import VerifySourceLink from '../components/verify-source-link'
@@ -31,24 +31,44 @@ class Home extends React.Component<Props, States> {
       sourceFile: Home.SOURCE_FILE_STUB
     }
 
-    this.handleCancelSourceFileLink = this.handleCancelSourceFileLink.bind(this)
-    this.handleContinueWithSourceFileLink = this.handleContinueWithSourceFileLink.bind(this)
+    this.handleSourceFileUnlockCancelled = this.handleSourceFileUnlockCancelled.bind(this)
+    this.handleSourceFileUnlockQueued = this.handleSourceFileUnlockQueued.bind(this)
     this.handleSourceFileUnlockSuccess = this.handleSourceFileUnlockSuccess.bind(this)
     this.handleSourceFileVerificationSuccess = this.handleSourceFileVerificationSuccess.bind(this)
+  }
+
+  private handleSourceFileUnlockCancelled() {
+    this.setState({ sourceFile: Home.SOURCE_FILE_STUB })
+  }
+
+  private handleSourceFileUnlockQueued(sourceFile: ISourceFile) {
+    this.setState({ sourceFile })
+  }
+
+  private handleSourceFileUnlockSuccess(downloadLink: string) {
+    const { sourceFile } = this.state
+
+    sourceFile.downloadLink = downloadLink
+
+    this.setState({ sourceFile })
+  }
+
+  private handleSourceFileVerificationSuccess(sourceFile: ISourceFile) {
+    this.setState({ sourceFile })
   }
 
   render() {
     let content: JSX.Element
 
-    if (this.state.sourceFile.status === 'verified') {
-      content = <FileMetaInfo
-        handleCancelSourceFileLink={this.handleCancelSourceFileLink}
-        handleContinueWithSourceFileLink={this.handleContinueWithSourceFileLink}
-        sourceFile={this.state.sourceFile}
-      />
-    } else if (this.state.sourceFile.status === 'pending') {
+    if (this.state.sourceFile.status === 'pending') {
       content = <UnlockSourceLink
         handleSourceFileUnlockSuccess={this.handleSourceFileUnlockSuccess}
+        sourceFile={this.state.sourceFile}
+      />
+    } else if (this.state.sourceFile.status === 'verified') {
+      content = <FileMetaInfo
+        handleSourceFileUnlockCancelled={this.handleSourceFileUnlockCancelled}
+        handleSourceFileUnlockQueued={this.handleSourceFileUnlockQueued}
         sourceFile={this.state.sourceFile}
       />
     } else {
@@ -100,32 +120,6 @@ class Home extends React.Component<Props, States> {
         `}</style>
       </>
     )
-  }
-
-  private handleCancelSourceFileLink() {
-    this.setState({ sourceFile: Home.SOURCE_FILE_STUB })
-  }
-
-  private handleContinueWithSourceFileLink() {
-    // 
-
-    const { sourceFile } = this.state
-
-    sourceFile.status = 'pending'
-
-    this.setState({ sourceFile })
-  }
-
-  private handleSourceFileUnlockSuccess(downloadLink: string) {
-    const { sourceFile } = this.state
-
-    sourceFile.downloadLink = downloadLink
-
-    this.setState({ sourceFile })
-  }
-
-  private handleSourceFileVerificationSuccess(sourceFile: ISourceFile) {
-    this.setState({ sourceFile })
   }
 }
 

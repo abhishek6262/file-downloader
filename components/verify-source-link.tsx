@@ -1,7 +1,7 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLink } from '@fortawesome/free-solid-svg-icons'
-import { verifySourceLink } from '../pages/api/util/Source'
+import { verifySourceLink } from '../util/api'
 
 interface Props {
   handleSourceFileVerificationSuccess: Function
@@ -9,11 +9,11 @@ interface Props {
 
 interface States {
   errorMessage: string
+  isProcessing: boolean
   sourceLink: string
 }
 
 class VerifySourceLink extends React.Component<Props, States> {
-  static readonly ERROR_INVALID_LINK: string = 'Invalid source URL. Failed to find any source file.'
   static readonly ERROR_NO_LINK: string = 'Please enter a URL to proceed.'
 
   constructor(props: Props) {
@@ -21,11 +21,47 @@ class VerifySourceLink extends React.Component<Props, States> {
 
     this.state = {
       errorMessage: '',
+      isProcessing: false,
       sourceLink: '',
     }
 
     this.handleSourceLinkChange = this.handleSourceLinkChange.bind(this)
     this.verifySourceFile = this.verifySourceFile.bind(this)
+  }
+
+  private handleSourceLinkChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const errorMessage = ''
+    const sourceLink = e.target.value
+
+    this.setState({ errorMessage, sourceLink })
+  }
+
+  private async verifySourceFile(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+
+    this.setState({
+      errorMessage: '',
+      isProcessing: true
+    })
+
+    if (this.state.sourceLink.length < 1) {
+      this.setState({
+        errorMessage: VerifySourceLink.ERROR_NO_LINK,
+        isProcessing: false,
+      })
+
+      return
+    }
+
+    try {
+      const res = await verifySourceLink(this.state.sourceLink)
+
+      this.props.handleSourceFileVerificationSuccess(res.data)
+    } catch (err) {
+      this.setState({ errorMessage: err.response.data.message })
+    } finally {
+      this.setState({ isProcessing: false })
+    }
   }
 
   render() {
@@ -43,40 +79,15 @@ class VerifySourceLink extends React.Component<Props, States> {
             </div>
 
             <div className="w-full lg:w-3/12 lg:pl-3">
-              <button type="submit" className="bg-orange-300 hover:bg-orange-400 text-gray-800 font-bold lg:mt-6 py-3 px-4 rounded inline-flex justify-center items-center w-full">
+              <button type="submit" className={(this.state.isProcessing ? "bg-orange-200" : "bg-orange-300") + " hover:bg-orange-400 text-gray-800 font-bold lg:mt-6 py-3 px-4 rounded inline-flex justify-center items-center w-full"} disabled={this.state.isProcessing}>
                 <FontAwesomeIcon icon={faLink} />
-                <span className="ml-2">Process</span>
+                <span className="ml-2">{this.state.isProcessing ? 'Processing ...' : 'Process'}</span>
               </button>
             </div>
           </div>
         </form>
       </div>
     )
-  }
-
-  private handleSourceLinkChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const errorMessage = ''
-    const sourceLink = e.target.value
-
-    this.setState({ errorMessage, sourceLink })
-  }
-
-  private async verifySourceFile(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-
-    if (this.state.sourceLink.length < 1) {
-      this.setState({ errorMessage: VerifySourceLink.ERROR_NO_LINK })
-
-      return
-    }
-
-    try {
-      const resp = await verifySourceLink(this.state.sourceLink)
-
-      this.props.handleSourceFileVerificationSuccess(resp.data)
-    } catch (err) {
-      this.setState({ errorMessage: VerifySourceLink.ERROR_INVALID_LINK })
-    }
   }
 }
 
