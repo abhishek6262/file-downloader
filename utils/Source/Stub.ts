@@ -8,8 +8,8 @@ const SOURCE_FILE_STUB: ISourceFile = {
   size: 0,
   status: 'init',
   type: '',
-  created_at: '',
-  updated_at: '',
+  createdAt: '',
+  updatedAt: '',
 }
 
 export default SOURCE_FILE_STUB 

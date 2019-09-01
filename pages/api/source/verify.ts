@@ -11,8 +11,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     sourceFile.id = -1
     sourceFile.downloadLink = ''
     sourceFile.status = 'verified'
-    sourceFile.created_at = new Date().toISOString()
-    sourceFile.updated_at = new Date().toISOString()
+    sourceFile.createdAt = new Date().toISOString()
+    sourceFile.updatedAt = new Date().toISOString()
 
     res.status(200).json(sourceFile)
   } catch (err) {
