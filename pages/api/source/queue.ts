@@ -24,7 +24,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   try {
-    const sourceFile = await FileModel.instance(sourceFilePayload)
+    const File       = await FileModel.instance()
+    const sourceFile = new File(sourceFilePayload)
 
     await sourceFile.save()
 

@@ -5,7 +5,7 @@ abstract class Model {
   static collection: string
   static schema: Schema
 
-  static instance(options = {}): Promise<mongoose.Document> {
+  static instance(): Promise<mongoose.Model<mongoose.Document>> {
     return new Promise(async (resolve, reject) => {
       try {
         if (!Connection.isConnected()) {
@@ -19,7 +19,7 @@ abstract class Model {
 
       const instance = mongoose.model(this.collection, this.schema)
 
-      resolve(new instance(options))
+      resolve(instance)
     })
   }
 }
