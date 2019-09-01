@@ -16,16 +16,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return
   }
 
-  const sourceFilePayload = {
-    name: sourceFileInfo.name,
-    size: sourceFileInfo.size,
-    sourceLink: sourceLink,
-    type: sourceFileInfo.type,
-  }
-
   try {
-    const File       = await FileModel.instance()
-    const sourceFile = new File(sourceFilePayload)
+    const File = await FileModel.instance()
+    const sourceFile = new File({
+      name      : sourceFileInfo.name,
+      size      : sourceFileInfo.size,
+      sourceLink: sourceLink,
+      type      : sourceFileInfo.type,
+    })
 
     await sourceFile.save()
 
