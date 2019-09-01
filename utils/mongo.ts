@@ -45,3 +45,5 @@ class Mongo {
     })
   }
 }
+
+export default Mongo
