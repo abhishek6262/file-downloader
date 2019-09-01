@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import ISourceFile from '../../../util/Source/interface/ISourceFile'
-import Source from '../../../util/Source/Source'
+import ISourceFile from '../../../utils/Source/interface/ISourceFile'
+import Source from '../../../utils/Source/Source'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => { 
   try {
@@ -8,11 +8,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const sourceFileInfo: ISourceFile = await Source.getFileInfo(sourceLink)
     const sourceFile: ISourceFile     = Object.assign({}, sourceFileInfo)
 
-    sourceFile.id -1
+    sourceFile.id = -1
     sourceFile.downloadLink = ''
     sourceFile.status = 'verified'
-    sourceFile.created_at = new Date().toISOString()
-    sourceFile.updated_at = new Date().toISOString()
+    sourceFile.createdAt = new Date().toISOString()
+    sourceFile.updatedAt = new Date().toISOString()
 
     res.status(200).json(sourceFile)
   } catch (err) {
