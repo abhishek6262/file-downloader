@@ -1,7 +1,7 @@
 import getConfig from 'next/config'
 import mongoose from 'mongoose'
 
-class Mongo {
+class Connection {
   private static connection: typeof mongoose = undefined
 
   private constructor() { }
@@ -20,9 +20,9 @@ class Mongo {
     return config
   }
 
-  static connect(): Promise<typeof mongoose> {
+  static create(): Promise<typeof mongoose> {
     return new Promise(async (resolve, reject) => {
-      if (this.connection !== undefined) {
+      if (this.isConnected()) {
         resolve(this.connection)
         return
       }
@@ -44,6 +44,10 @@ class Mongo {
       }
     })
   }
+
+  static isConnected(): boolean {
+    return this.connection !== undefined 
+  }
 }
 
-export default Mongo
+export default Connection
