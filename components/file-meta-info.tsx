@@ -7,6 +7,7 @@ import {
   faTimesCircle,
   faVideo,
 } from '@fortawesome/free-solid-svg-icons'
+import { queueSourceFile } from '../utils/api';
 import ISourceFile from '../utils/Source/interface/ISourceFile'
 
 interface Props {
@@ -22,14 +23,14 @@ class FileMetaInfo extends React.Component<Props> {
     this.queueSourceFileToUnlock = this.queueSourceFileToUnlock.bind(this) 
   }
 
-  private queueSourceFileToUnlock() {
-    // TODO: Queue file to server.
-    const queuedSourceFile: ISourceFile = Object.assign({}, this.props.sourceFile)
+  private async queueSourceFileToUnlock() {
+    try {
+      const res = await queueSourceFile(this.props.sourceFile.sourceLink)
 
-    queuedSourceFile.id = 1
-    queuedSourceFile.status = 'pending'
-
-    this.props.handleSourceFileUnlockQueued(queuedSourceFile)
+      this.props.handleSourceFileUnlockQueued(res.data)
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   render() {
