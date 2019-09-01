@@ -10,12 +10,12 @@ export default class Source {
   static getLink(sourceLink: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       if (sourceLink === undefined || sourceLink.length < 1) {
-        reject(Source.ERROR_EMPTY_URL)
+        reject(this.ERROR_EMPTY_URL)
         return
       }
 
-      if (! await Source.fileExists(sourceLink)) {
-        reject(Source.ERROR_NO_SOURCE)
+      if (! await this.fileExists(sourceLink)) {
+        reject(this.ERROR_NO_SOURCE)
         return
       }
 
@@ -30,7 +30,7 @@ export default class Source {
         const resType = res.headers['content-type'].split('/')[0]
 
         if (res.status !== 200 || resType === 'text') {
-          reject(Source.ERROR_NO_SOURCE)
+          reject(this.ERROR_NO_SOURCE)
           return
         }
 
@@ -45,7 +45,7 @@ export default class Source {
           type: fileType,
         })
       } catch (err) {
-        reject(Source.ERROR_NO_SOURCE)
+        reject(this.ERROR_NO_SOURCE)
       }
     })
   }
@@ -53,7 +53,7 @@ export default class Source {
   static fileExists(sourceLink: string): Promise<boolean> {
     return new Promise(async (resolve) => {
       try {
-        await Source.getFileInfo(sourceLink)
+        await this.getFileInfo(sourceLink)
 
         resolve(true)
       } catch (err) {
