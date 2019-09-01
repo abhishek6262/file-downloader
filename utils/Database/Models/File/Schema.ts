@@ -1,12 +1,12 @@
 import { Schema } from 'mongoose'
 
 const fileSchema = new Schema({
-  name: String,
-  size: Number,
+  name: { type: String, required: true },
+  size: { type: Number, required: true },
   status: { type: String, default: 'pending' },
-  type: String,
+  type: { type: String, required: true },
   downloadLink: { type: String, default: '' },
-  sourceLink: String,
+  sourceLink: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 })
