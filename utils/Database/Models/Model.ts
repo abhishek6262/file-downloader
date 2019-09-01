@@ -1,11 +1,9 @@
 import mongoose, { Schema } from 'mongoose'
 import Connection from '../Connection'
 
-class Model {
+abstract class Model {
   static collection: string
   static schema: Schema
-
-  private constructor() { }
 
   static instance(options = {}): Promise<mongoose.Document> {
     return new Promise(async (resolve, reject) => {
