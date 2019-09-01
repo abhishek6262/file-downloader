@@ -5,16 +5,18 @@ class Model {
   static collection: string
   static schema: Schema
 
+  private constructor() { }
+
   static instance(options = {}): Promise<mongoose.Document> {
     return new Promise(async (resolve, reject) => {
-      if (!Connection.isConnected()) {
-        try {
+      try {
+        if (!Connection.isConnected()) {
           await Connection.create()
-        } catch (err) {
-          reject(err)
-
-          return
         }
+      } catch (err) {
+        reject(err)
+
+        return
       }
 
       const instance = mongoose.model(this.collection, this.schema)
