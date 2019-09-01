@@ -1,4 +1,5 @@
 import React from 'react'
+import { countSourceFiles } from '../utils/api'
 import ISourceFile from '../utils/Source/interface/ISourceFile'
 import NewSourceLink from './new-source-link'
 import EmailNotification from './email-notification'
@@ -19,54 +20,31 @@ class UnlockSourceLink extends React.Component<Props, States> {
 
     this.state = {
       completionPercentage: 0,
-      queuePosition: 2,
+      queuePosition: 0,
     }
 
-    this.mimicServerLinkUnlocking = this.mimicServerLinkUnlocking.bind(this)
+    this.monitorQueuedFiles = this.monitorQueuedFiles.bind(this)
 
-    this.mimicServerLinkUnlocking()
+    this.monitorQueuedFiles()
   }
 
-  private mimicServerLinkUnlocking() {
-    const incrementCompletionPercentage = () => {
-      const newCompletionPercentage = this.state.completionPercentage + 1
+  private monitorQueuedFiles() {
+    const monitorQueuedFiles = setInterval(async () => {
+      const res = await countSourceFiles('pending')
+      const queuePosition = res.data.totalQueuedFiles
 
-      this.setState({ completionPercentage: newCompletionPercentage })
+      this.setState({ queuePosition })
 
-      return newCompletionPercentage
-    }
-
-    const decrementQueue = () => {
-      const newQueuePosition = this.state.queuePosition - 1
-
-      this.setState({ queuePosition: newQueuePosition })
-
-      return newQueuePosition
-    }
-
-    const queuePositionInterval = setInterval(() => {
-      const queuePosition = decrementQueue()
-
-      if (queuePosition === 0) {
-        clearInterval(queuePositionInterval)
-
-        const incrementCompletionPercentageInterval = setInterval(() => {
-          const newCompletionPercentage = incrementCompletionPercentage()
-
-          if (newCompletionPercentage === 100) {
-            const newSourceLink = 'https://resu.me/s6516s1dc'
-            this.props.handleSourceFileUnlockSuccess(newSourceLink)
-
-            clearInterval(incrementCompletionPercentageInterval)
-          }
-        }, 100)
+      if (queuePosition === 1) {
+        clearInterval(monitorQueuedFiles)
       }
-    }, 2000)
+    }, 15000)
   }
 
   render() {
-    let content: JSX.Element
     const { completionPercentage, queuePosition } = this.state
+
+    let content: JSX.Element
 
     if (this.props.sourceFile.downloadLink.length > 0) {
       content = <NewSourceLink sourceFile={this.props.sourceFile} />

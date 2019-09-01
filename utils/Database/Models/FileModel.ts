@@ -1,4 +1,6 @@
-import { Schema } from 'mongoose'
+import mongoose, { Schema } from 'mongoose'
+
+delete mongoose.connection.models['files']
 
 const fileSchema = new Schema({
   name: { type: String, required: true },
@@ -11,4 +13,4 @@ const fileSchema = new Schema({
   updatedAt: { type: Date, default: Date.now },
 })
 
-export default fileSchema
+export default mongoose.model('files', fileSchema)
