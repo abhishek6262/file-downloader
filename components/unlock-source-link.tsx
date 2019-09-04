@@ -29,16 +29,30 @@ class UnlockSourceLink extends React.Component<Props, States> {
   }
 
   private monitorQueuedFiles() {
+    const setQueuedFiles = () => {
+      return new Promise(async (resolve) => {
+        const res         = await countSourceFiles('pending')
+        const queuedFiles = res.data.totalQueuedFiles
+
+        this.setState({ queuePosition: queuedFiles })
+
+        resolve(queuedFiles)
+      })
+    }
+
     const monitorQueuedFiles = setInterval(async () => {
-      const res = await countSourceFiles('pending')
-      const queuePosition = res.data.totalQueuedFiles
+      try {
+        const queuedFiles = await setQueuedFiles()
 
-      this.setState({ queuePosition })
-
-      if (queuePosition === 1) {
-        clearInterval(monitorQueuedFiles)
+        if (queuedFiles === 1) {
+          clearInterval(monitorQueuedFiles)
+        }
+      } catch (err) {
+        console.log(err.response || err)
       }
     }, 15000)
+
+    setQueuedFiles()
   }
 
   render() {
