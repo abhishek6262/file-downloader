@@ -7,8 +7,8 @@ import {
   faTimesCircle,
   faVideo,
 } from '@fortawesome/free-solid-svg-icons'
-import { queueSourceFile } from '../utils/api';
-import ISourceFile from '../utils/Source/interface/ISourceFile'
+import { queueSourceFile } from '../app/api';
+import ISourceFile from '../app/Source/interface/ISourceFile'
 
 interface Props {
   handleSourceFileUnlockCancelled: Function

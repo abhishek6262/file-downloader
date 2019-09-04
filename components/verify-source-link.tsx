@@ -1,7 +1,7 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLink } from '@fortawesome/free-solid-svg-icons'
-import { verifySourceLink } from '../utils/api'
+import { verifySourceLink } from '../app/api'
 
 interface Props {
   handleSourceFileVerificationSuccess: Function
