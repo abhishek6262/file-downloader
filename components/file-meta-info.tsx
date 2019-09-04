@@ -81,12 +81,12 @@ class FileMetaInfo extends React.Component<Props, States> {
           </div>
   
           <div className="md:flex items-center ml-auto">
-            <button className={(isProcessing ? "bg-gray-200" : "bg-gray-300") + " hover:bg-gray-400 text-gray-800 font-bold mb-3 mr-3 py-3 px-4 rounded inline-flex justify-center items-center w-full"} onClick={() => handleSourceFileUnlockCancelled()} disabled={isProcessing}>
+            <button className={(isProcessing ? "bg-gray-200" : "bg-gray-300") + " hover:bg-gray-400 text-gray-800 font-bold mb-3 md:mb-0 mr-3 py-3 px-4 rounded inline-flex justify-center items-center w-full"} onClick={() => handleSourceFileUnlockCancelled()} disabled={isProcessing}>
               <FontAwesomeIcon icon={faTimesCircle} />
               <span className="ml-2">Cancel</span>
             </button>
   
-            <button className={(isProcessing ? "bg-orange-200" : "bg-orange-300") + " hover:bg-orange-400 text-gray-800 font-bold mb-3 py-3 px-4 rounded inline-flex justify-center items-center w-full"} onClick={this.queueSourceFileToUnlock} disabled={isProcessing}>
+            <button className={(isProcessing ? "bg-orange-200" : "bg-orange-300") + " hover:bg-orange-400 text-gray-800 font-bold mb-3 md:mb-0 py-3 px-4 rounded inline-flex justify-center items-center w-full"} onClick={this.queueSourceFileToUnlock} disabled={isProcessing}>
               {
                 isProcessing
                   ? <span>Processing...</span>
