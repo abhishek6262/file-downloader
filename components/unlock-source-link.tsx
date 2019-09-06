@@ -1,6 +1,6 @@
 import React from 'react'
-import { countSourceFiles } from '../app/api'
-import ISourceFile from '../app/Source/interface/ISourceFile'
+import { countSourceFiles } from '../server/api'
+import ISourceFile from '../server/Source/interface/ISourceFile'
 import NewSourceLink from './new-source-link'
 import EmailNotification from './email-notification'
 

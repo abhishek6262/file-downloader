@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import Connection from '../../../app/Database/Connection'
-import FileModel from '../../../app/Database/Models/FileModel'
-import ISourceFile from '../../../app/Source/interface/ISourceFile'
-import Source from '../../../app/Source/Source'
+import Connection from '../../../server/Database/Connection'
+import FileModel from '../../../server/Database/Models/FileModel'
+import ISourceFile from '../../../server/Source/interface/ISourceFile'
+import Source from '../../../server/Source/Source'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   let sourceFileInfo: ISourceFile

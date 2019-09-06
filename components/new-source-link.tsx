@@ -1,5 +1,5 @@
 import React from 'react'
-import ISourceFile from '../app/Source/interface/ISourceFile'
+import ISourceFile from '../server/Source/interface/ISourceFile'
 
 interface Props {
   sourceFile: ISourceFile

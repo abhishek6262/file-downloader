@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import ISourceFile from '../../../app/Source/interface/ISourceFile'
-import Source from '../../../app/Source/Source'
+import ISourceFile from '../../../server/Source/interface/ISourceFile'
+import Source from '../../../server/Source/Source'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => { 
   try {

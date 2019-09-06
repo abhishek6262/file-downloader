@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import Connection from '../../../app/Database/Connection'
-import FileModel from '../../../app/Database/Models/FileModel'
+import Connection from '../../../server/Database/Connection'
+import FileModel from '../../../server/Database/Models/FileModel'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { status } = req.query
