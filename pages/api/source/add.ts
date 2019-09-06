@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import Connection from '../../../server/Database/Connection'
 import FileModel from '../../../server/Database/Models/FileModel'
 import ISourceFile from '../../../server/Source/interface/ISourceFile'
 import Source from '../../../server/Source/Source'
@@ -18,10 +17,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   try {
-    if (! Connection.isConnected()) {
-      await Connection.create()
-    }
-
     const sourceFile = new FileModel({
       name      : sourceFileInfo.name,
       size      : sourceFileInfo.size,
