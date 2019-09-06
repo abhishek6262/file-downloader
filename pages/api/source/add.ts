@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import FileModel from '../../../utils/Database/Models/File/File'
-import ISourceFile from '../../../utils/Source/interface/ISourceFile'
-import Source from '../../../utils/Source/Source'
+import FileModel from '../../../server/Database/Models/FileModel'
+import ISourceFile from '../../../server/Source/interface/ISourceFile'
+import Source from '../../../server/Source/Source'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   let sourceFileInfo: ISourceFile
@@ -16,15 +16,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return
   }
 
-  const sourceFilePayload = {
-    name: sourceFileInfo.name,
-    size: sourceFileInfo.size,
-    sourceLink: sourceLink,
-    type: sourceFileInfo.type,
-  }
-
   try {
-    const sourceFile = await FileModel.instance(sourceFilePayload)
+    const sourceFile = new FileModel({
+      name      : sourceFileInfo.name,
+      size      : sourceFileInfo.size,
+      sourceLink: sourceLink,
+      type      : sourceFileInfo.type,
+    })
 
     await sourceFile.save()
 

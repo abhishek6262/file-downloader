@@ -1,7 +1,7 @@
 import axios from 'axios'
 import path from 'path'
 import url from 'url'
-import ISourceFile from "./interface/ISourceFile"
+import ISourceFile from './interface/ISourceFile'
 
 export default class Source {
   static readonly ERROR_EMPTY_URL: string = 'The source URL can not be empty.'

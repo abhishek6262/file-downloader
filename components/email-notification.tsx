@@ -1,7 +1,7 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBell } from '@fortawesome/free-solid-svg-icons'
-import ISourceFile from '../utils/Source/interface/ISourceFile'
+import ISourceFile from '../server/Source/interface/ISourceFile'
 
 interface Props {
   sourceFile: ISourceFile
