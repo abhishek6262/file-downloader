@@ -1,13 +1,19 @@
 import cron from 'node-cron'
-import ITask from './Tasks/ITask'
+import Task from './Tasks/Task'
 
 abstract class Engine {
-  static tasks: ITask[]
+  static tasks: Task[]
 
   static run() {
     cron.schedule('* * * * * *', () => {
       // This function will be called every second.
-      this.tasks.forEach(task => task.handle())
+      this.tasks.forEach(task => {
+        if (task.isSleeping()) {
+          return
+        }
+
+        task.handle()
+      })
     })
   }
 }

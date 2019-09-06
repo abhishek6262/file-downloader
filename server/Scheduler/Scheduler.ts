@@ -1,9 +1,9 @@
 import Engine from './Engine'
-import ITask from './Tasks/ITask'
+import Task from './Tasks/Task'
 import ProcessFiles from './Tasks/ProcessFiles'
 
 class Scheduler extends Engine {
-  static tasks: ITask[] = [
+  static tasks: Task[] = [
     new ProcessFiles,
   ]
 }
