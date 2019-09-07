@@ -32,6 +32,8 @@ class ProcessFiles extends Task {
 
           // TODO: Mail user about the completion of the download.
         }
+
+        // TODO: Add a web socket connection.
       })
     } catch (err) {
       await file.updateOne({ status: 'failed' }).exec()
