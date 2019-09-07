@@ -61,4 +61,11 @@ export default class Source {
       }
     })
   }
+
+  static downloadFile(sourceLink: string, path: string, monitorProcess: CallableFunction) {
+    return new Promise(async (resolve, reject) => {
+      // Do something as the download progresses
+      monitorProcess()
+    })
+  }
 }

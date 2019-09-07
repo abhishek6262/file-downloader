@@ -1,7 +1,25 @@
 import FileModel from '../../Database/Models/FileModel'
+import Source from '../../Source/Source'
 import Task from './Task'
 
 class ProcessFiles extends Task {
+  private async processFile(file) {
+    try {
+      // TODO: Start a thread to handle the download process.
+      Source.downloadFile(file.sourceLink, '/static/downloads', async (downloadPercent: number) => {
+        if (downloadPercent === 0) {
+          await file.updateOne({ status: 'processing' }).exec()
+        }
+
+        // 
+      })
+    } catch (err) {
+      await file.updateOne({ status: 'failed' }).exec()
+
+      // TODO: Log the failure.
+    }
+  }
+
   async handle() {
     const processingFiles = await FileModel.find({ status: 'processing' })
 
@@ -21,11 +39,7 @@ class ProcessFiles extends Task {
       return
     }
 
-    pendingFiles.forEach(file => {
-      file.updateOne({ status: 'processing' }).exec()
-
-      // TODO: Start a thread to handle the download process.
-    })
+    pendingFiles.forEach(this.processFile)
   }
 }
 
