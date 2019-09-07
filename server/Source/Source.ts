@@ -56,7 +56,12 @@ export default class Source {
 
   static async downloadFile(sourceLink: string, path: string, monitorDownloadProcess: CallableFunction) {
     const fileName = Path.basename(Url.parse(sourceLink).pathname)
-    const downloadPath = Path.resolve(__dirname, './../../../', path, fileName)
+
+    if (path[0] === '/') {
+      path = path.substr(1)
+    }
+
+    const downloadPath = Path.resolve(__dirname, './../../' + path, fileName)
 
     const res = await Axios({
       method: 'GET',
