@@ -31,6 +31,7 @@ class ProcessFiles extends Task {
       return
     }
 
+    // TODO: Set failed files to pending.
     const pendingFiles = await FileModel.find({ status: 'pending' }).limit(2)
 
     if (pendingFiles.length < 1) {
