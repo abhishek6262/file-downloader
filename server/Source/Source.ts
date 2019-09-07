@@ -61,12 +61,15 @@ export default class Source {
       path = path.substr(1)
     }
 
+    // TODO: Handle extensions for files which does not have them in
+    // basename.
+
     const downloadPath = Path.resolve(__dirname, './../../' + path, fileName)
 
     const res = await Axios({
       method: 'GET',
-      url: sourceLink,
       responseType: 'stream',
+      url: sourceLink,
       onDownloadProgress(progressEvent) {
         console.log(progressEvent)
 
