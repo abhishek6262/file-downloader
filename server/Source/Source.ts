@@ -1,4 +1,5 @@
 import Axios from 'axios'
+import Fs from 'fs'
 import Path from 'path'
 import Url from 'url'
 import ISourceFile from './interface/ISourceFile'
@@ -54,7 +55,21 @@ export default class Source {
   }
 
   static async downloadFile(sourceLink: string, path: string, monitorDownloadProcess: CallableFunction) {
-    // Do something as the download progresses
-    monitorDownloadProcess()
+    const fileName = Path.basename(Url.parse(sourceLink).pathname)
+    const downloadPath = Path.resolve(__dirname, './../../../', path, fileName)
+
+    const res = await Axios({
+      method: 'GET',
+      url: sourceLink,
+      responseType: 'stream',
+      onDownloadProgress(progressEvent) {
+        console.log(progressEvent)
+
+        // Do something as the download progresses
+        // monitorDownloadProcess()
+      }
+    })
+
+    res.data.pipe(Fs.createWriteStream(downloadPath))
   }
 }
