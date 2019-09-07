@@ -25,14 +25,12 @@ class ProcessFiles extends Task {
       // TODO: Start a thread to handle the download process.
       const downloadPath = Path.resolve(__dirname, './../../../static/downloads')
 
-      Source.downloadFile(file.sourceLink, downloadPath, async (downloadPercent: number) => {
-        if (downloadPercent === 0) {
-          await file.updateOne({ status: 'processing' }).exec()
-        } else if (downloadPercent === 50) {
-          // TODO: Mail user about the half download.
-        } else if (downloadPercent === 100) {
-          await file.updateOne({ status: 'completed' }).exec()
+      Source.downloadFile(file.sourceLink, downloadPath, async (status: string, downloadedPercentage: number) => {
+        if (file.status !== status) {
+          await file.updateOne({ status }).exec()
+        }
 
+        if (status === 'completed') {
           // TODO: Mail user about the completion of the download.
         }
 

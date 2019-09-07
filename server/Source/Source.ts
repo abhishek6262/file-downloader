@@ -1,6 +1,7 @@
 import Axios from 'axios'
 import Fs from 'fs'
 import Path from 'path'
+import Request from 'request'
 import Url from 'url'
 import ISourceFile from './interface/ISourceFile'
 
@@ -64,27 +65,28 @@ export default class Source {
 
     downloadPath = Path.resolve(downloadPath, fileName)
 
-    const res = await Axios({
-      method: 'GET',
-      responseType: 'stream',
-      url: sourceLink
+    let downloadedSize = 0
+    let totalSize = 0
+
+    const file = Fs.createWriteStream(downloadPath).on('finish', () => {
+      file.close()
+      monitorDownloadProcess('completed', 100)
     })
 
-    res.data.on('data', data => {
-      // Do something as the download progresses
-      const downloadPercent = 0
+    Request(sourceLink)
+      .on('error', err => {
+        throw new Error(err.message)
+      })
+      .on('response', res => {
+        totalSize = parseInt(res.headers['content-length'])
+      })
+      .on('data', data => {
+        downloadedSize += data.length
 
-      // monitorDownloadProcess(downloadPercent)
-    })
+        const downloadedPercentage = (downloadedSize / totalSize) * 100
 
-    res.data.on('end', () => {
-      // 
-    })
-
-    res.data.on('error', error => {
-      // 
-    })
-
-    res.data.pipe(Fs.createWriteStream(downloadPath))
+        monitorDownloadProcess('processing', downloadedPercentage)
+      })
+      .pipe(file)
   }
 }
