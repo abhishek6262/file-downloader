@@ -9,7 +9,17 @@ class ProcessFiles extends Task {
     return processingFiles.length > 0
   }
 
-  private async processFile(file) {
+  private async processPendingFiles(processFiles: CallableFunction) {
+    const pendingFiles = await FileModel.find({ status: 'pending' }).limit(2)
+
+    if (! processFiles(pendingFiles)) {
+      return
+    }
+
+    pendingFiles.forEach(this.downloadFile)
+  }
+
+  private async downloadFile(file) {
     try {
       // TODO: Start a thread to handle the download process.
       Source.downloadFile(file.sourceLink, '/static/downloads', async (downloadPercent: number) => {
@@ -45,19 +55,18 @@ class ProcessFiles extends Task {
     // too many files at once and overloading the server.
     if (await this.isFilesProcessing()) {
       this.sleep(30)
-
       return
     }
 
-    const pendingFiles = await FileModel.find({ status: 'pending' }).limit(2)
+    await this.processPendingFiles(pendingFiles => {
+      if (pendingFiles.length > 0) {
+        return true
+      }
 
-    if (pendingFiles.length < 1) {
       this.sleep(30)
 
-      return
-    }
-
-    pendingFiles.forEach(this.processFile)
+      return false
+    })
 
     // Add failed files to queue at the end so newly added files are given
     // priority over them.
