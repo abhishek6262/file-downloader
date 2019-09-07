@@ -3,6 +3,12 @@ import Source from '../../Source/Source'
 import Task from './Task'
 
 class ProcessFiles extends Task {
+  private async isFilesProcessing(): Promise<boolean> {
+    const processingFiles = await FileModel.find({ status: 'processing' })
+
+    return processingFiles.length > 0
+  }
+
   private async processFile(file) {
     try {
       // TODO: Start a thread to handle the download process.
@@ -35,11 +41,9 @@ class ProcessFiles extends Task {
   }
 
   async handle() {
-    const processingFiles = await FileModel.find({ status: 'processing' })
-
     // Terminate if some files are already processing to avoid processing
     // too many files at once and overloading the server.
-    if (processingFiles.length > 0) {
+    if (await this.isFilesProcessing()) {
       this.sleep(30)
 
       return
