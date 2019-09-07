@@ -1,6 +1,6 @@
-import axios from 'axios'
-import path from 'path'
-import url from 'url'
+import Axios from 'axios'
+import Path from 'path'
+import Url from 'url'
 import ISourceFile from './interface/ISourceFile'
 
 export default class Source {
@@ -21,14 +21,14 @@ export default class Source {
 
   static async getFileInfo(sourceLink: string): Promise<ISourceFile> {
     try {
-      const res     = await axios.head(sourceLink)
+      const res     = await Axios.head(sourceLink)
       const resType = res.headers['content-type'].split('/')[0]
 
       if (res.status !== 200 || resType === 'text') {
         throw new Error(this.ERROR_NO_SOURCE)
       }
 
-      const fileName = path.basename(url.parse(sourceLink).pathname)
+      const fileName = Path.basename(Url.parse(sourceLink).pathname)
       const fileSize = res.headers['content-length'] / 1000 // Bytes to KB
       const fileType = res.headers['content-type']
 
