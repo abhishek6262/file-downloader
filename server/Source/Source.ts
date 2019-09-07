@@ -54,31 +54,35 @@ export default class Source {
     }
   }
 
-  static async downloadFile(sourceLink: string, path: string, monitorDownloadProcess: CallableFunction) {
+  static async downloadFile(sourceLink: string, downloadPath: string, monitorDownloadProcess: CallableFunction) {
     const fileName = Path.basename(Url.parse(sourceLink).pathname)
-
-    if (path[0] === '/') {
-      path = path.substr(1)
-    }
 
     // TODO: Handle extensions for files which does not have them in
     // basename.
 
-
     // TODO: Generate unique file names.
 
-    const downloadPath = Path.resolve(__dirname, './../../' + path, fileName)
+    downloadPath = Path.resolve(downloadPath, fileName)
 
     const res = await Axios({
       method: 'GET',
       responseType: 'stream',
-      url: sourceLink,
-      onDownloadProgress(progressEvent) {
-        console.log(progressEvent)
+      url: sourceLink
+    })
 
-        // Do something as the download progresses
-        // monitorDownloadProcess()
-      }
+    res.data.on('data', data => {
+      // Do something as the download progresses
+      const downloadPercent = 0
+
+      // monitorDownloadProcess(downloadPercent)
+    })
+
+    res.data.on('end', () => {
+      // 
+    })
+
+    res.data.on('error', error => {
+      // 
     })
 
     res.data.pipe(Fs.createWriteStream(downloadPath))

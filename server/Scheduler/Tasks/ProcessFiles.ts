@@ -1,3 +1,4 @@
+import Path from 'path'
 import FileModel from '../../Database/Models/FileModel'
 import Source from '../../Source/Source'
 import Task from './Task'
@@ -22,7 +23,9 @@ class ProcessFiles extends Task {
   private async downloadFile(file) {
     try {
       // TODO: Start a thread to handle the download process.
-      Source.downloadFile(file.sourceLink, '/static/downloads', async (downloadPercent: number) => {
+      const downloadPath = Path.resolve(__dirname, './../../../static/downloads')
+
+      Source.downloadFile(file.sourceLink, downloadPath, async (downloadPercent: number) => {
         if (downloadPercent === 0) {
           await file.updateOne({ status: 'processing' }).exec()
         } else if (downloadPercent === 50) {
