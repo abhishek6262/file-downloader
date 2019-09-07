@@ -7,13 +7,7 @@ abstract class Engine {
   static run() {
     cron.schedule('* * * * * *', () => {
       // This function will be called every second.
-      this.tasks.forEach(task => {
-        if (task.isSleeping()) {
-          return
-        }
-
-        task.handle()
-      })
+      this.tasks.forEach(task => !task.isSleeping() && task.handle())
     })
   }
 }
