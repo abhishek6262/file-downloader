@@ -1,5 +1,5 @@
 import Axios from 'axios'
-import Fs from 'fs'
+import Fs, {unlink} from 'fs'
 import Mime from 'mime'
 import Path from 'path'
 import Request from 'request'
@@ -80,6 +80,9 @@ export default class Source {
 
     await Request(sourceLink)
       .on('error', err => {
+        file.close()
+        Fs.unlinkSync(downloadPath)
+
         throw err
       })
       .on('response', res => {
@@ -93,6 +96,11 @@ export default class Source {
         monitorDownloadProcess({ status: 'processing', completionPercentage, fileName })
       })
       .pipe(file)
+
+    file.on('error', () => {
+      file.close()
+      Fs.unlinkSync(downloadPath)
+    })
 
     file.on('finish', () => {
       file.close()
