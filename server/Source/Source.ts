@@ -1,5 +1,6 @@
 import Axios from 'axios'
 import Fs from 'fs'
+import Mime from 'mime'
 import Path from 'path'
 import Request from 'request'
 import Url from 'url'
@@ -56,10 +57,15 @@ export default class Source {
   }
 
   static async downloadFile(sourceLink: string, downloadPath: string, monitorDownloadProcess: CallableFunction) {
-    const fileName = Path.basename(Url.parse(sourceLink).pathname)
+    let fileName = Path.basename(Url.parse(sourceLink).pathname)
+    let fileExtension = Path.extname(fileName)
 
-    // TODO: Handle extensions for files which does not have them in
-    // basename.
+    if (fileExtension.length < 1) {
+      const { type } = await this.getFileInfo(sourceLink)
+
+      fileExtension = Mime.getExtension(type)
+      fileName += '.' + fileExtension
+    }
 
     // TODO: Generate unique file names.
 
