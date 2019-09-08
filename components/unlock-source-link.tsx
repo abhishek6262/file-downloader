@@ -1,3 +1,5 @@
+import getConfig from 'next/config'
+import Pusher from 'pusher-js'
 import React from 'react'
 import { countSourceFiles } from '../server/api'
 import ISourceFile from '../server/Source/interface/ISourceFile'
@@ -26,6 +28,30 @@ class UnlockSourceLink extends React.Component<Props, States> {
     this.monitorQueuedFiles = this.monitorQueuedFiles.bind(this)
 
     this.monitorQueuedFiles()
+
+    // Establish Web Socket connection with the running background
+    // process.
+
+    const {
+      publicRuntimeConfig: {
+        PUSHER_CLUSTER,
+        PUSHER_EVENT_NAME,
+        PUSHER_KEY,
+      }
+    } = getConfig()
+
+    const pusher = new Pusher(PUSHER_KEY, {
+      cluster: PUSHER_CLUSTER,
+      forceTLS: true
+    })
+
+    const channel = pusher.subscribe(this.props.sourceFile.id.toString())
+
+    channel.bind(PUSHER_EVENT_NAME, data => {
+      // this.setState({ completionPercentage })
+
+      console.log(data)
+    })
   }
 
   private monitorQueuedFiles() {

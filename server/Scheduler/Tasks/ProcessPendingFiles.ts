@@ -3,6 +3,7 @@ import Path from 'path'
 import FileModel, {IFileDocument} from '../../Database/Models/FileModel'
 import Source from '../../Source/Source'
 import Task from './Task'
+import WebSocket from '../../WebSocket'
 
 class ProcessPendingFiles extends Task {
   private async isProcessing(): Promise<boolean> {
@@ -27,22 +28,28 @@ class ProcessPendingFiles extends Task {
   }
 
   private async downloadFile(file: IFileDocument) {
-    try {
-      const downloadDIR  = 'static/downloads'
-      const downloadPath = Path.resolve(__dirname, './../../../' + downloadDIR)
+    const downloadDIR  = 'static/downloads'
+    const downloadPath = Path.resolve(__dirname, './../../../' + downloadDIR)
 
+    try {
       await file.updateOne({ status: 'processing' }).exec()
 
       await Source.downloadFile(file.sourceLink, downloadPath, async ({ status, completionPercentage, fileName }) => {
-        if (status === 'completed') {
-          const downloadLink = downloadDIR + '/' + fileName
+        const downloadLink = downloadDIR + '/' + fileName
 
+        // TODO: Limit the messages sent via web socket to avoid over
+        // charges by the third-party apps.
+        WebSocket.broadcast(file.id, {
+          completionPercentage,
+          downloadLink,
+          status,
+        })
+
+        if (status === 'completed') {
           await file.updateOne({ downloadLink, status }).exec()
 
           // TODO: Mail user about the completion of the download.
         }
-
-        // TODO: Add a web socket connection.
       })
     } catch (err) {
       const failedAttempts = file.failedAttempts + 1
