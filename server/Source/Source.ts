@@ -91,9 +91,9 @@ export default class Source {
       .on('data', data => {
         downloadedSize += data.length
 
-        const downloadedPercentage = (downloadedSize / totalSize) * 100
+        const completionPercentage = (downloadedSize / totalSize) * 100
 
-        monitorDownloadProcess('processing', downloadedPercentage)
+        monitorDownloadProcess('processing', completionPercentage)
       })
       .pipe(file)
   }

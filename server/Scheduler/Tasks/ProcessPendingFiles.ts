@@ -10,10 +10,10 @@ class ProcessPendingFiles extends Task {
     return processingFiles.length > 0
   }
 
-  private async processFiles(processFiles: CallableFunction) {
+  private async processFiles(canProceed: CallableFunction) {
     const pendingFiles = await FileModel.find({ status: 'pending' }).limit(2)
 
-    if (! processFiles(pendingFiles)) {
+    if (! canProceed(pendingFiles)) {
       return
     }
 
@@ -26,7 +26,7 @@ class ProcessPendingFiles extends Task {
     try {
       const downloadPath = Path.resolve(__dirname, './../../../static/downloads')
 
-      await Source.downloadFile(file.sourceLink, downloadPath, async (status: string, downloadedPercentage: number) => {
+      await Source.downloadFile(file.sourceLink, downloadPath, async (status: string, completionPercentage: number) => {
         if (file.status !== status) {
           await file.updateOne({ status }).exec()
         }
