@@ -2,13 +2,6 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "firefox",
-      "request": "launch",
-      "name": "Next: Firefox",
-      "url": "http://localhost:3000",
-      "webRoot": "${workspaceFolder}"
-    },
-    {
       "type": "node",
       "request": "launch",
       "name": "Next: Node",
@@ -19,13 +12,4 @@
       }
     }
   ],
-  "compounds": [
-    {
-      "name": "Next: Full",
-      "configurations": [
-        "Next: Node",
-        "Next: Firefox"
-      ]
-    }
-  ]
 }

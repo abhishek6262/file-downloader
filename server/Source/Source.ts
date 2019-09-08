@@ -3,6 +3,7 @@ import Fs from 'fs'
 import Mime from 'mime'
 import Path from 'path'
 import Request from 'request'
+import Uniqid from 'uniqid'
 import Url from 'url'
 import ISourceFile from './interface/ISourceFile'
 
@@ -62,12 +63,13 @@ export default class Source {
 
     if (fileExtension.length < 1) {
       const { type } = await this.getFileInfo(sourceLink)
-
       fileExtension = Mime.getExtension(type)
-      fileName += '.' + fileExtension
     }
 
-    // TODO: Generate unique file names.
+    // Generate a unique file name so it does not conflict with others
+    // present in the same directory.
+    fileName = Uniqid()
+    fileName += '.' + fileExtension
 
     downloadPath = Path.resolve(downloadPath, fileName)
 
