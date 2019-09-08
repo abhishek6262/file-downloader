@@ -24,13 +24,16 @@ class ProcessPendingFiles extends Task {
 
   private async downloadFile(file) {
     try {
-      const downloadPath = Path.resolve(__dirname, './../../../static/downloads')
+      const downloadDIR  = 'static/downloads'
+      const downloadPath = Path.resolve(__dirname, './../../../' + downloadDIR)
 
       await file.updateOne({ status: 'processing' }).exec()
 
-      await Source.downloadFile(file.sourceLink, downloadPath, async ({ status, completionPercentage }) => {
+      await Source.downloadFile(file.sourceLink, downloadPath, async ({ status, completionPercentage, fileName }) => {
         if (status === 'completed') {
-          await file.updateOne({ status }).exec()
+          const downloadLink = downloadDIR + '/' + fileName
+
+          await file.updateOne({ downloadLink, status }).exec()
 
           // TODO: Mail user about the completion of the download.
         }

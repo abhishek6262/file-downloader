@@ -5,7 +5,7 @@ class CleanDiskSpace extends Task {
     // TODO: Handle cleaning disk space by removing old downloads.
     console.log('Cleaning disk space ...')
 
-    this.sleep(1000)
+    this.sleep(600)
   }
 }
 

@@ -90,13 +90,13 @@ export default class Source {
 
         const completionPercentage = (downloadedSize / totalSize) * 100
 
-        monitorDownloadProcess({ status: 'processing', completionPercentage })
+        monitorDownloadProcess({ status: 'processing', completionPercentage, fileName })
       })
       .pipe(file)
 
     file.on('finish', () => {
       file.close()
-      monitorDownloadProcess({ status: 'completed', completionPercentage: 100 })
+      monitorDownloadProcess({ status: 'completed', completionPercentage: 100, fileName })
     })
   }
 }
