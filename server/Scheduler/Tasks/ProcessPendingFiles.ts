@@ -1,3 +1,4 @@
+import getConfig from 'next/config'
 import Path from 'path'
 import FileModel, {IFileDocument} from '../../Database/Models/FileModel'
 import Source from '../../Source/Source'
@@ -11,9 +12,12 @@ class ProcessPendingFiles extends Task {
   }
 
   private async processFiles(canProceed: CallableFunction) {
-    const pendingFiles = await FileModel.find({ status: 'pending' }).limit(2)
+    const { serverRuntimeConfig } = getConfig()
+    const MAX_SERVICE_WORKERS = serverRuntimeConfig.MAX_SERVICE_WORKERS
 
-    if (! canProceed(pendingFiles)) {
+    const pendingFiles = await FileModel.find({ status: 'pending' }).limit(MAX_SERVICE_WORKERS)
+
+    if (!canProceed(pendingFiles)) {
       return
     }
 
