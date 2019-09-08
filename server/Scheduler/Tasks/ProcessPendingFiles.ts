@@ -26,18 +26,19 @@ class ProcessPendingFiles extends Task {
     try {
       const downloadPath = Path.resolve(__dirname, './../../../static/downloads')
 
-      await Source.downloadFile(file.sourceLink, downloadPath, async (status: string, completionPercentage: number) => {
-        if (file.status !== status) {
-          await file.updateOne({ status }).exec()
-        }
+      await file.updateOne({ status: 'processing' }).exec()
 
+      await Source.downloadFile(file.sourceLink, downloadPath, async ({ status, completionPercentage }) => {
         if (status === 'completed') {
+          await file.updateOne({ status }).exec()
+
           // TODO: Mail user about the completion of the download.
         }
 
         // TODO: Add a web socket connection.
       })
     } catch (err) {
+      // TODO: Increment failed attempts.
       await file.updateOne({ status: 'failed' }).exec()
 
       // TODO: Mail user about the failed download.

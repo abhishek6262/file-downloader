@@ -76,14 +76,11 @@ export default class Source {
     let downloadedSize = 0
     let totalSize = 0
 
-    const file = Fs.createWriteStream(downloadPath).on('finish', () => {
-      file.close()
-      monitorDownloadProcess('completed', 100)
-    })
+    const file = Fs.createWriteStream(downloadPath)
 
-    Request(sourceLink)
+    await Request(sourceLink)
       .on('error', err => {
-        throw new Error(err.message)
+        throw err
       })
       .on('response', res => {
         totalSize = parseInt(res.headers['content-length'])
@@ -93,8 +90,13 @@ export default class Source {
 
         const completionPercentage = (downloadedSize / totalSize) * 100
 
-        monitorDownloadProcess('processing', completionPercentage)
+        monitorDownloadProcess({ status: 'processing', completionPercentage })
       })
       .pipe(file)
+
+    file.on('finish', () => {
+      file.close()
+      monitorDownloadProcess({ status: 'completed', completionPercentage: 100 })
+    })
   }
 }
