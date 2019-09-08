@@ -10,6 +10,9 @@ class RequeueFailedFiles extends Task {
     for (const file of failedFiles) {
       await file.updateOne({ status: 'pending' }).exec()
     }
+
+    // Try to download failed files after 10 minutes.
+    this.sleep(1000)
   }
 }
 
