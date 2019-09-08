@@ -8,7 +8,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const sourceFileInfo: ISourceFile = await Source.getFileInfo(sourceLink)
     const sourceFile: ISourceFile     = Object.assign({}, sourceFileInfo)
 
-    sourceFile.id = -1
+    sourceFile._id = -1
     sourceFile.downloadLink = ''
     sourceFile.status = 'verified'
     sourceFile.createdAt = new Date().toISOString()

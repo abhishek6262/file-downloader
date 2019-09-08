@@ -27,7 +27,7 @@ class UnlockSourceLink extends React.Component<Props, States> {
 
     this.monitorQueuedFiles = this.monitorQueuedFiles.bind(this)
 
-    this.monitorQueuedFiles()
+    const queuedFilesInterval = this.monitorQueuedFiles()
 
     // Establish Web Socket connection with the running background
     // process.
@@ -45,12 +45,19 @@ class UnlockSourceLink extends React.Component<Props, States> {
       forceTLS: true
     })
 
-    const channel = pusher.subscribe(this.props.sourceFile.id.toString())
+    const channel = pusher.subscribe('my-channel')
 
-    channel.bind(PUSHER_EVENT_NAME, data => {
-      // this.setState({ completionPercentage })
+    channel.bind(PUSHER_EVENT_NAME, ({ completionPercentage, downloadLink, status }) => {
+      if (this.state.queuePosition > 0) {
+        clearInterval(queuedFilesInterval)
+        this.setState({ queuePosition: 0 })
+      }
 
-      console.log(data)
+      if (status === 'completed') {
+        this.props.handleSourceFileUnlockSuccess(downloadLink)
+      }
+
+      this.setState({ completionPercentage })
     })
   }
 
@@ -77,6 +84,8 @@ class UnlockSourceLink extends React.Component<Props, States> {
     }, 15000)
 
     setQueuedFiles()
+
+    return monitorQueuedFiles
   }
 
   render() {

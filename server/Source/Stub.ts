@@ -1,7 +1,7 @@
 import ISourceFile from './interface/ISourceFile'
 
 const SOURCE_FILE_STUB: ISourceFile = {
-  id: -1,
+  _id: -1,
   name: '',
   downloadLink: '',
   sourceLink: '',

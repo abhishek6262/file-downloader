@@ -3,6 +3,7 @@ const withCSS = require("@zeit/next-css")
 module.exports = withCSS({
   publicRuntimeConfig: {
     // This will be available on both server and client
+    APP_URL: 'http://localhost:3000',
     PUSHER_CLUSTER: 'ap2',
     PUSHER_EVENT_NAME: 'process-completion',
     PUSHER_KEY: 'a3eb00aefc621d324542',

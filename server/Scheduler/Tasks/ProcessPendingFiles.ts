@@ -28,6 +28,8 @@ class ProcessPendingFiles extends Task {
   }
 
   private async downloadFile(file: IFileDocument) {
+    const { publicRuntimeConfig: { APP_URL } } = getConfig()
+
     const downloadDIR  = 'static/downloads'
     const downloadPath = Path.resolve(__dirname, './../../../' + downloadDIR)
 
@@ -39,9 +41,9 @@ class ProcessPendingFiles extends Task {
 
         // TODO: Limit the messages sent via web socket to avoid over
         // charges by the third-party apps.
-        WebSocket.broadcast(file.id, {
+        WebSocket.broadcast('my-channel', {
           completionPercentage,
-          downloadLink,
+          downloadLink: APP_URL + '/' + downloadLink,
           status,
         })
 

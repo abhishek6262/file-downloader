@@ -78,7 +78,7 @@ export default class Source {
 
     const file = Fs.createWriteStream(downloadPath)
 
-    await Request(sourceLink)
+    Request(sourceLink)
       .on('error', err => {
         file.close()
         Fs.unlinkSync(downloadPath)
