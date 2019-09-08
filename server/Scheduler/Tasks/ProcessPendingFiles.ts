@@ -45,7 +45,7 @@ class ProcessPendingFiles extends Task {
 
       await file.updateOne({ failedAttempts, status: 'failed' }).exec()
 
-      // TODO: Mail user about the failed download.
+      // TODO: Mail user about the failed download & also about max tried.
     }
   }
 
