@@ -42,6 +42,7 @@ class ProcessPendingFiles extends Task {
         // TODO: Limit the messages sent via web socket to avoid over
         // charges by the third-party apps.
         WebSocket.broadcast('my-channel', {
+          _id: file._id,
           completionPercentage,
           downloadLink: APP_URL + '/' + downloadLink,
           status,
