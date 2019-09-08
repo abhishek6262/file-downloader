@@ -43,7 +43,7 @@ class ProcessPendingFiles extends Task {
         // charges by the third-party apps.
         WebSocket.broadcast('my-channel', {
           _id: file._id,
-          completionPercentage,
+          completionPercentage: completionPercentage.toFixed(2),
           downloadLink: APP_URL + '/' + downloadLink,
           status,
         })
