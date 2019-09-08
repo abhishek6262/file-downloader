@@ -1,10 +1,9 @@
-import mongoose, { Schema } from 'mongoose'
+import {Schema} from "mongoose";
 
-delete mongoose.connection.models['files']
-
-const fileSchema = new Schema({
+export const FileSchema = new Schema({
   name: { type: String, required: true },
   size: { type: Number, required: true },
+  failedAttempts: { type: Number, default: 0 },
   status: { type: String, default: 'pending' },
   type: { type: String, required: true },
   downloadLink: { type: String, default: '' },
@@ -12,5 +11,3 @@ const fileSchema = new Schema({
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 })
-
-export default mongoose.model('files', fileSchema)

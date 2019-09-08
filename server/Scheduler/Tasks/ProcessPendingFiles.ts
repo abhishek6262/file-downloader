@@ -1,5 +1,5 @@
 import Path from 'path'
-import FileModel from '../../Database/Models/FileModel'
+import FileModel, {IFileDocument} from '../../Database/Models/FileModel'
 import Source from '../../Source/Source'
 import Task from './Task'
 
@@ -22,7 +22,7 @@ class ProcessPendingFiles extends Task {
     }
   }
 
-  private async downloadFile(file) {
+  private async downloadFile(file: IFileDocument) {
     try {
       const downloadDIR  = 'static/downloads'
       const downloadPath = Path.resolve(__dirname, './../../../' + downloadDIR)
@@ -41,8 +41,9 @@ class ProcessPendingFiles extends Task {
         // TODO: Add a web socket connection.
       })
     } catch (err) {
-      // TODO: Increment failed attempts.
-      await file.updateOne({ status: 'failed' }).exec()
+      const failedAttempts = file.failedAttempts + 1
+
+      await file.updateOne({ failedAttempts, status: 'failed' }).exec()
 
       // TODO: Mail user about the failed download.
     }
