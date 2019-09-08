@@ -39,19 +39,21 @@ class ProcessPendingFiles extends Task {
       await Source.downloadFile(file.sourceLink, downloadPath, async ({ status, completionPercentage, fileName }) => {
         const downloadLink = downloadDIR + '/' + fileName
 
-        // TODO: Limit the messages sent via web socket to avoid over
-        // charges by the third-party apps.
-        WebSocket.broadcast('my-channel', {
-          _id: file._id,
-          completionPercentage: completionPercentage.toFixed(2),
-          downloadLink: APP_URL + '/' + downloadLink,
-          status,
-        })
-
         if (status === 'completed') {
           await file.updateOne({ downloadLink, status }).exec()
 
           // TODO: Mail user about the completion of the download.
+        }
+
+        // Limit the data being sent via web socket to avoid charges by
+        // the third-party apps providing the web socket service.
+        if (completionPercentage.toFixed(0) % 5 === 0) {
+          WebSocket.broadcast('my-channel', {
+            _id: file._id,
+            completionPercentage: completionPercentage.toFixed(2),
+            downloadLink: APP_URL + '/' + downloadLink,
+            status,
+          })
         }
       })
     } catch (err) {
