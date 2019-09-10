@@ -5,9 +5,9 @@ abstract class Engine {
   static tasks: Task[]
 
   static run() {
-    cron.schedule('* * * * * *', () => {
+    cron.schedule('*/30 * * * * *', () => {
       // This function will be called every second.
-      this.tasks.forEach(task => !task.isSleeping() && task.handle())
+      this.tasks.forEach(async (task) => !task.isSleeping() && await task.handle())
     })
   }
 }

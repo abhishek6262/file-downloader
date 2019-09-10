@@ -1,3 +1,5 @@
+import getConfig from 'next/config'
+import Pusher from 'pusher-js'
 import React from 'react'
 import { countSourceFiles } from '../server/api'
 import ISourceFile from '../server/Source/interface/ISourceFile'
@@ -15,6 +17,8 @@ interface States {
 }
 
 class UnlockSourceLink extends React.Component<Props, States> {
+  private monitorQueuedFilesInterval: NodeJS.Timeout
+
   constructor(props: Props) {
     super(props)
 
@@ -24,8 +28,41 @@ class UnlockSourceLink extends React.Component<Props, States> {
     }
 
     this.monitorQueuedFiles = this.monitorQueuedFiles.bind(this)
+    this.resetQueuePosition = this.resetQueuePosition.bind(this)
 
-    this.monitorQueuedFiles()
+    this.monitorQueuedFilesInterval = this.monitorQueuedFiles()
+
+    // Establish Web Socket connection with the running background
+    // process.
+
+    const {
+      publicRuntimeConfig: {
+        PUSHER_CLUSTER,
+        PUSHER_EVENT_NAME,
+        PUSHER_KEY,
+      }
+    } = getConfig()
+
+    const pusher = new Pusher(PUSHER_KEY, {
+      cluster: PUSHER_CLUSTER,
+      forceTLS: true
+    })
+
+    const channel = pusher.subscribe('my-channel')
+
+    channel.bind(PUSHER_EVENT_NAME, ({ _id, completionPercentage, downloadLink, status }) => {
+      if (this.props.sourceFile._id !== _id) {
+        return
+      }
+
+      this.resetQueuePosition()
+
+      if (status === 'completed') {
+        this.props.handleSourceFileUnlockSuccess(downloadLink)
+      }
+
+      this.setState({ completionPercentage })
+    })
   }
 
   private monitorQueuedFiles() {
@@ -51,6 +88,16 @@ class UnlockSourceLink extends React.Component<Props, States> {
     }, 15000)
 
     setQueuedFiles()
+
+    return monitorQueuedFiles
+  }
+
+  private resetQueuePosition() {
+    if (this.state.queuePosition > 0) {
+      clearInterval(this.monitorQueuedFilesInterval)
+
+      this.setState({ queuePosition: 0 })
+    }
   }
 
   render() {

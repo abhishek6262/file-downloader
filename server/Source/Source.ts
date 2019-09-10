@@ -1,6 +1,10 @@
-import axios from 'axios'
-import path from 'path'
-import url from 'url'
+import Axios from 'axios'
+import Fs, {unlink} from 'fs'
+import Mime from 'mime'
+import Path from 'path'
+import Request from 'request'
+import Uniqid from 'uniqid'
+import Url from 'url'
 import ISourceFile from './interface/ISourceFile'
 
 export default class Source {
@@ -21,14 +25,14 @@ export default class Source {
 
   static async getFileInfo(sourceLink: string): Promise<ISourceFile> {
     try {
-      const res     = await axios.head(sourceLink)
+      const res     = await Axios.head(sourceLink)
       const resType = res.headers['content-type'].split('/')[0]
 
       if (res.status !== 200 || resType === 'text') {
         throw new Error(this.ERROR_NO_SOURCE)
       }
 
-      const fileName = path.basename(url.parse(sourceLink).pathname)
+      const fileName = Path.basename(Url.parse(sourceLink).pathname)
       const fileSize = res.headers['content-length'] / 1000 // Bytes to KB
       const fileType = res.headers['content-type']
 
@@ -53,8 +57,54 @@ export default class Source {
     }
   }
 
-  static async downloadFile(sourceLink: string, path: string, monitorDownloadProcess: CallableFunction) {
-    // Do something as the download progresses
-    monitorDownloadProcess()
+  static async downloadFile(sourceLink: string, downloadPath: string, monitorDownloadProcess: CallableFunction) {
+    let fileName = Path.basename(Url.parse(sourceLink).pathname)
+    let fileExtension = Path.extname(fileName)
+
+    if (fileExtension.length < 1) {
+      const { type } = await this.getFileInfo(sourceLink)
+      fileExtension = Mime.getExtension(type)
+    }
+
+    // Generate a unique file name so it does not conflict with others
+    // present in the same directory.
+    fileName = Uniqid()
+    fileName += '.' + fileExtension
+
+    downloadPath = Path.resolve(downloadPath, fileName)
+
+    let downloadedSize = 0
+    let totalSize = 0
+
+    const file = Fs.createWriteStream(downloadPath)
+
+    Request(sourceLink)
+      .on('error', err => {
+        file.close()
+        Fs.unlinkSync(downloadPath)
+
+        throw err
+      })
+      .on('response', res => {
+        totalSize = parseInt(res.headers['content-length'])
+      })
+      .on('data', data => {
+        downloadedSize += data.length
+
+        const completionPercentage = (downloadedSize / totalSize) * 100
+
+        monitorDownloadProcess({ status: 'processing', completionPercentage, fileName })
+      })
+      .pipe(file)
+
+    file.on('error', () => {
+      file.close()
+      Fs.unlinkSync(downloadPath)
+    })
+
+    file.on('finish', () => {
+      file.close()
+      monitorDownloadProcess({ status: 'completed', completionPercentage: 100, fileName })
+    })
   }
 }
