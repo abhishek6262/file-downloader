@@ -1,6 +1,6 @@
-import {Schema} from "mongoose";
+import { Schema } from 'mongoose'
 
-export const FileSchema = new Schema({
+const FileSchema = new Schema({
   name: { type: String, required: true },
   size: { type: Number, required: true },
   failedAttempts: { type: Number, default: 0 },
@@ -11,3 +11,5 @@ export const FileSchema = new Schema({
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 })
+
+export { FileSchema }

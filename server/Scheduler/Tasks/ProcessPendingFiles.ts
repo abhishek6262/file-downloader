@@ -34,13 +34,13 @@ class ProcessPendingFiles extends Task {
     const downloadPath = Path.resolve(__dirname, './../../../' + downloadDIR)
 
     try {
-      await file.updateOne({ status: 'processing' }).exec()
+      await file.updateOne({ status: 'processing', updatedAt: new Date }).exec()
 
       await Source.downloadFile(file.sourceLink, downloadPath, async ({ status, completionPercentage, fileName }) => {
         const downloadLink = downloadDIR + '/' + fileName
 
         if (status === 'completed') {
-          await file.updateOne({ downloadLink, status }).exec()
+          await file.updateOne({ downloadLink, status, updatedAt: new Date }).exec()
 
           // TODO: Mail user about the completion of the download.
         }
@@ -59,7 +59,7 @@ class ProcessPendingFiles extends Task {
     } catch (err) {
       const failedAttempts = file.failedAttempts + 1
 
-      await file.updateOne({ failedAttempts, status: 'failed' }).exec()
+      await file.updateOne({ failedAttempts, status: 'failed', updatedAt: new Date }).exec()
 
       // TODO: Mail user about the failed download & also about max tried.
     }
