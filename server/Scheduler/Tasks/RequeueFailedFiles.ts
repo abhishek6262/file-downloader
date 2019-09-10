@@ -7,12 +7,10 @@ class RequeueFailedFiles extends Task {
     const { serverRuntimeConfig } = getConfig()
     const MAX_FAILED_ATTEMPTS = serverRuntimeConfig.MAX_FAILED_ATTEMPTS
 
-    const failedFiles = await FileModel.find({ status: 'failed' })
+    const totalFailedFiles = await FileModel.find({ failedAttempts: { $lt: MAX_FAILED_ATTEMPTS }, status: 'failed' })
 
-    for (const file of failedFiles) {
-      if (file.failedAttempts < MAX_FAILED_ATTEMPTS) {
-        await file.updateOne({ status: 'pending' }).exec()
-      }
+    for (const file of totalFailedFiles) {
+      await file.updateOne({ status: 'pending', updatedAt: new Date })
     }
 
     // Try to download failed files after 5 minutes.
