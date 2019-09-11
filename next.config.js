@@ -3,7 +3,7 @@ const withCSS = require("@zeit/next-css")
 module.exports = withCSS({
   publicRuntimeConfig: {
     // This will be available on both server and client
-    APP_NAME: 'File Downloader',
+    APP_NAME: 'Resume.io',
     APP_URL: 'http://localhost:3000',
     PUSHER_CLUSTER: 'ap2',
     PUSHER_EVENT_NAME: 'process-completion',
