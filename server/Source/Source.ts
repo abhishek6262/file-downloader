@@ -1,5 +1,5 @@
 import Axios from 'axios'
-import Fs, {unlink} from 'fs'
+import Fs from 'fs'
 import Mime from 'mime'
 import Path from 'path'
 import Request from 'request'

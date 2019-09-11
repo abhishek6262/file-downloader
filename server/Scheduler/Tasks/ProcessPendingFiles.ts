@@ -1,6 +1,6 @@
 import getConfig from 'next/config'
 import Path from 'path'
-import FileModel, {IFileDocument} from '../../Database/Models/FileModel'
+import FileModel, { IFileDocument } from '../../Database/Models/FileModel'
 import Mailer from '../../Mailer'
 import Source from '../../Source/Source'
 import Task from './Task'
@@ -14,8 +14,7 @@ class ProcessPendingFiles extends Task {
   }
 
   private async processFiles(canProceed: CallableFunction) {
-    const { serverRuntimeConfig } = getConfig()
-    const MAX_SERVICE_WORKERS = serverRuntimeConfig.MAX_SERVICE_WORKERS
+    const { serverRuntimeConfig: { MAX_SERVICE_WORKERS } } = getConfig()
 
     const pendingFiles = await FileModel.find({ status: 'pending' }).limit(MAX_SERVICE_WORKERS)
 

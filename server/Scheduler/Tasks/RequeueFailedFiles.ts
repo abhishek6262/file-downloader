@@ -4,8 +4,7 @@ import Task from './Task'
 
 class RequeueFailedFiles extends Task {
   async handle() {
-    const { serverRuntimeConfig } = getConfig()
-    const MAX_FAILED_ATTEMPTS = serverRuntimeConfig.MAX_FAILED_ATTEMPTS
+    const { serverRuntimeConfig: { MAX_FAILED_ATTEMPTS } } = getConfig()
 
     const totalFailedFiles = await FileModel.find({ failedAttempts: { $lt: MAX_FAILED_ATTEMPTS }, status: 'failed' })
 
