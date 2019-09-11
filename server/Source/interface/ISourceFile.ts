@@ -2,6 +2,8 @@ type sourceFileStatus = 'init' | 'verified' | 'pending' | 'running' | 'failed' |
 
 export default interface ISourceFile {
   _id?: number
+  email?: string
+  failedAttempts?: number
   downloadLink?: string
   status?: sourceFileStatus
   createdAt?: string
