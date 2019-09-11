@@ -8,11 +8,9 @@ class WebSocket {
   private constructor() { }
 
   public static broadcast(channel: string, data: any) {
-    if (!this.isConnected()) {
-      this.connect()
-    }
+    const { connection, eventName } = this.getConnection()
 
-    this.connection.trigger(channel, this.eventName, data)
+    connection.trigger(channel, eventName, data)
   }
 
   private static config() {
@@ -29,15 +27,15 @@ class WebSocket {
     return config
   }
 
-  private static connect() {
-    const config = this.config()
+  private static getConnection(): { connection: Pusher, eventName: string } {
+    if (this.connection === undefined || this.eventName.length < 1) {
+      const config = this.config()
 
-    this.eventName = config.eventName
-    this.connection = new Pusher(config)
-  }
+      this.eventName = config.eventName
+      this.connection = new Pusher(config)
+    }
 
-  private static isConnected(): boolean {
-    return this.connection !== undefined 
+    return { connection: this.connection, eventName: this.eventName }
   }
 }
 
