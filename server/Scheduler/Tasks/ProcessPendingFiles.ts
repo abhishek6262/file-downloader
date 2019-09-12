@@ -34,13 +34,13 @@ class ProcessPendingFiles extends Task {
     const downloadPath = Path.resolve(__dirname, './../../../' + downloadDIR)
 
     try {
-      await file.updateOne({ status: 'processing', updatedAt: new Date }).exec()
+      file = await FileModel.findOneAndUpdate({ _id: file._id }, { status: 'processing', updatedAt: new Date }, { new: true })
 
       await Source.downloadFile(file.sourceLink, downloadPath, async ({ status, completionPercentage, fileName }) => {
         const downloadLink = downloadDIR + '/' + fileName
 
         if (status === 'completed') {
-          await file.updateOne({ downloadLink, status, updatedAt: new Date }).exec()
+          file = await FileModel.findOneAndUpdate({ _id: file._id }, { downloadLink, status, updatedAt: new Date }, { new: true })
 
           if (file.email.length > 0) {
             const message = `Hello,<br><br>Thanks for using our service. We have successfully generated a safe, resumable and light-speed download link for you. You can start your download right away by clicking on the link below.<br><br><a href="${APP_URL + '/' + downloadLink}" target="_blank">${APP_URL + '/' + downloadLink}</a><br><br>Happy Converting.<br><br>Regards,<br>${APP_NAME}.`
@@ -63,7 +63,7 @@ class ProcessPendingFiles extends Task {
     } catch (err) {
       const failedAttempts = file.failedAttempts + 1
 
-      await file.updateOne({ failedAttempts, status: 'failed', updatedAt: new Date }).exec()
+      file = await FileModel.findOneAndUpdate({ _id: file._id }, { failedAttempts, status: 'failed', updatedAt: new Date }, { new: true })
 
       if (file.failedAttempts < MAX_FAILED_ATTEMPTS) {
         const message = `Hello,<br><br>We failed to generate a link for your file <b>"${file.name}"</b>. But we will continue trying to generate again few more times and we will update you about the same.<br><br>Happy Converting.<br><br>Regards,<br>${APP_NAME}.`
