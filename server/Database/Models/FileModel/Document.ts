@@ -7,6 +7,7 @@ export interface IFileDocument extends Document {
   failedAttempts: number
   status: string
   type: string
+  filePath: string
   downloadLink: string
   sourceLink: string
   createdAt: Date

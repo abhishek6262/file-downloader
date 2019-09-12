@@ -1,3 +1,4 @@
+import getConfig from 'next/config'
 import { Schema } from 'mongoose'
 
 const FileSchema = new Schema({
@@ -7,10 +8,23 @@ const FileSchema = new Schema({
   failedAttempts: { type: Number, default: 0 },
   status: { type: String, default: 'pending' },
   type: { type: String, required: true },
-  downloadLink: { type: String, default: '' },
+  filePath: { type: String, default: '' },
   sourceLink: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 })
+
+FileSchema.virtual('downloadLink').get(function () {
+  if (this.filePath.length < 1) {
+    return ''
+  }
+
+  const { publicRuntimeConfig: { APP_URL } } = getConfig()
+
+  return APP_URL + '/' + this.filePath
+})
+
+FileSchema.set('toJSON', { virtuals: true })
+FileSchema.set('toObject', { virtuals: true })
 
 export { FileSchema }
