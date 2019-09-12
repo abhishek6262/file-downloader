@@ -18,9 +18,7 @@ FileSchema.virtual('downloadLink').get(function () {
     return ''
   }
 
-  const { APP_URL } = process.env
-
-  return APP_URL + '/d?file=' + this._id
+  return process.env.APP_URL + '/d?file=' + this._id
 })
 
 FileSchema.set('toJSON', { virtuals: true })
