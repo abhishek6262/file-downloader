@@ -38,7 +38,7 @@ app.prepare().then(async () => {
 
       res.download(filePath, fileName)
     } catch (err) {
-      res.status(500).json({ message: 'Something went wrong. Please try again later' })
+      res.status(500).json({ message: 'This download link is invalid.' })
       return
     }
   })
