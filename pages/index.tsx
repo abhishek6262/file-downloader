@@ -20,18 +20,17 @@ class Home extends React.Component<Props, States> {
       sourceFile: SOURCE_FILE_STUB
     }
 
+    this.handleSourceFileUpdate = this.handleSourceFileUpdate.bind(this)
     this.handleSourceFileUnlockCancelled = this.handleSourceFileUnlockCancelled.bind(this)
-    this.handleSourceFileUnlockQueued = this.handleSourceFileUnlockQueued.bind(this)
     this.handleSourceFileUnlockSuccess = this.handleSourceFileUnlockSuccess.bind(this)
-    this.handleSourceFileVerificationSuccess = this.handleSourceFileVerificationSuccess.bind(this)
+  }
+
+  private handleSourceFileUpdate(sourceFile: ISourceFile) {
+    this.setState({ sourceFile })
   }
 
   private handleSourceFileUnlockCancelled() {
     this.setState({ sourceFile: SOURCE_FILE_STUB })
-  }
-
-  private handleSourceFileUnlockQueued(sourceFile: ISourceFile) {
-    this.setState({ sourceFile })
   }
 
   private handleSourceFileUnlockSuccess(downloadLink: string) {
@@ -42,34 +41,32 @@ class Home extends React.Component<Props, States> {
     this.setState({ sourceFile })
   }
 
-  private handleSourceFileVerificationSuccess(sourceFile: ISourceFile) {
-    this.setState({ sourceFile })
-  }
-
   render() {
     let content: JSX.Element
 
     if (this.state.sourceFile.status === 'pending') {
       content = <UnlockSourceLink
-        handleSourceFileUnlockSuccess={this.handleSourceFileUnlockSuccess}
-        sourceFile={this.state.sourceFile}
-      />
+                  handleSourceFileUnlockSuccess={this.handleSourceFileUnlockSuccess}
+                  sourceFile={this.state.sourceFile}
+                />
     } else if (this.state.sourceFile.status === 'verified') {
       content = <FileMetaInfo
-        handleSourceFileUnlockCancelled={this.handleSourceFileUnlockCancelled}
-        handleSourceFileUnlockQueued={this.handleSourceFileUnlockQueued}
-        sourceFile={this.state.sourceFile}
-      />
+                  handleSourceFileUnlockCancelled={this.handleSourceFileUnlockCancelled}
+                  handleSourceFileUnlockQueued={this.handleSourceFileUpdate}
+                  sourceFile={this.state.sourceFile}
+                />
     } else {
       content = <VerifySourceLink
-        handleSourceFileVerificationSuccess={this.handleSourceFileVerificationSuccess}
-      />
+                  handleSourceFileVerificationSuccess={this.handleSourceFileUpdate}
+                />
     }
+
+    const { APP_NAME } = process.env
 
     return (
       <>
         <Head>
-          <title>File Downloader - Generate Non-Capped, Non-Expiring and Resumable Links</title>
+          <title>{ APP_NAME } - Generate Non-Capped, Non-Expiring and Resumable Links</title>
         </Head>
 
         <div id="main" className="site-content bg-fixed bg-gray-900">

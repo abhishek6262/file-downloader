@@ -13,7 +13,7 @@ class CleanDiskSpace extends Task {
     })
 
     for (const file of files) {
-      const filePath = Path.resolve(__dirname, './../../../' + file.downloadLink)
+      const filePath = Path.resolve(__dirname, './../../../' + file.filePath)
 
       if (Fs.existsSync(filePath)) {
         Fs.unlinkSync(filePath)

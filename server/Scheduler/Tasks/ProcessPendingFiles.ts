@@ -1,6 +1,7 @@
 import getConfig from 'next/config'
 import Path from 'path'
-import FileModel, {IFileDocument} from '../../Database/Models/FileModel'
+import FileModel, { IFileDocument } from '../../Database/Models/FileModel'
+import Mailer from '../../Mailer'
 import Source from '../../Source/Source'
 import Task from './Task'
 import WebSocket from '../../WebSocket'
@@ -13,8 +14,7 @@ class ProcessPendingFiles extends Task {
   }
 
   private async processFiles(canProceed: CallableFunction) {
-    const { serverRuntimeConfig } = getConfig()
-    const MAX_SERVICE_WORKERS = serverRuntimeConfig.MAX_SERVICE_WORKERS
+    const { serverRuntimeConfig: { MAX_SERVICE_WORKERS } } = getConfig()
 
     const pendingFiles = await FileModel.find({ status: 'pending' }).limit(MAX_SERVICE_WORKERS)
 
@@ -28,40 +28,49 @@ class ProcessPendingFiles extends Task {
   }
 
   private async downloadFile(file: IFileDocument) {
-    const { publicRuntimeConfig: { APP_URL } } = getConfig()
+    const { serverRuntimeConfig: { MAX_FAILED_ATTEMPTS } } = getConfig()
+    const { APP_NAME, TRACK_DOWNLOAD_COMPLETION } = process.env
 
     const downloadDIR  = 'static/downloads'
     const downloadPath = Path.resolve(__dirname, './../../../' + downloadDIR)
 
     try {
-      await file.updateOne({ status: 'processing', updatedAt: new Date }).exec()
+      file = await FileModel.findOneAndUpdate({ _id: file._id }, { status: 'processing', updatedAt: new Date }, { new: true })
 
       await Source.downloadFile(file.sourceLink, downloadPath, async ({ status, completionPercentage, fileName }) => {
-        const downloadLink = downloadDIR + '/' + fileName
+        const filePath = downloadDIR + '/' + fileName
 
         if (status === 'completed') {
-          await file.updateOne({ downloadLink, status, updatedAt: new Date }).exec()
+          file = await FileModel.findOneAndUpdate({ _id: file._id }, { filePath, status, updatedAt: new Date }, { new: true })
 
-          // TODO: Mail user about the completion of the download.
+          if (file.email.length > 0) {
+            const downloadLink = file.downloadLink
+            const message = `Hello,<br><br>Thanks for using our service. We have successfully generated a safe, resumable and light-speed download link for you. You can start your download right away by clicking on the link below.<br><br><a href="${downloadLink}" target="_blank">${downloadLink}</a><br><br>Happy Converting.<br><br>Regards,<br>${APP_NAME}.`
+
+            await Mailer.send(file.email, APP_NAME + ' - Download Completed', message)
+          }
         }
 
-        // Limit the data being sent via web socket to avoid charges by
-        // the third-party apps providing the web socket service.
-        if (completionPercentage.toFixed(0) % 5 === 0) {
-          WebSocket.broadcast('my-channel', {
-            _id: file._id,
-            completionPercentage: completionPercentage.toFixed(2),
-            downloadLink: APP_URL + '/' + downloadLink,
-            status,
-          })
-        }
+        WebSocket.broadcast(`${TRACK_DOWNLOAD_COMPLETION}/${file._id}`, {
+          completionPercentage: completionPercentage.toFixed(2),
+          downloadLink: file.downloadLink,
+          status,
+        })
       })
     } catch (err) {
       const failedAttempts = file.failedAttempts + 1
 
-      await file.updateOne({ failedAttempts, status: 'failed', updatedAt: new Date }).exec()
+      file = await FileModel.findOneAndUpdate({ _id: file._id }, { failedAttempts, status: 'failed', updatedAt: new Date }, { new: true })
 
-      // TODO: Mail user about the failed download & also about max tried.
+      if (file.failedAttempts < MAX_FAILED_ATTEMPTS) {
+        const message = `Hello,<br><br>We failed to generate a link for your file <b>"${file.name}"</b>. But we will continue trying to generate again few more times and we will update you about the same.<br><br>Happy Converting.<br><br>Regards,<br>${APP_NAME}.`
+
+        await Mailer.send(file.email, APP_NAME + ' - Download Failed', message)
+      } else {
+        const message = `Hello,<br><br>We failed to generate a link for your file <b>"${file.name}"</b>. But we can try to generate for your new files.<br><br>Happy Converting.<br><br>Regards,<br>${APP_NAME}.`
+
+        await Mailer.send(file.email, APP_NAME + ' - Download Failed', message)
+      }
     }
   }
 

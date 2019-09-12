@@ -1,10 +1,9 @@
-import getConfig from 'next/config'
-import Pusher from 'pusher-js'
+import IO from 'socket.io-client'
 import React from 'react'
 import { countSourceFiles } from '../server/api'
 import ISourceFile from '../server/Source/interface/ISourceFile'
+import EmailNotification from './EmailNotification/email-notification'
 import NewSourceLink from './new-source-link'
-import EmailNotification from './email-notification'
 
 interface Props {
   handleSourceFileUnlockSuccess: Function
@@ -18,6 +17,7 @@ interface States {
 
 class UnlockSourceLink extends React.Component<Props, States> {
   private monitorQueuedFilesInterval: NodeJS.Timeout
+  private socket: SocketIOClient.Socket
 
   constructor(props: Props) {
     super(props)
@@ -29,32 +29,18 @@ class UnlockSourceLink extends React.Component<Props, States> {
 
     this.monitorQueuedFiles = this.monitorQueuedFiles.bind(this)
     this.resetQueuePosition = this.resetQueuePosition.bind(this)
+  }
 
+  componentDidMount() {
     this.monitorQueuedFilesInterval = this.monitorQueuedFiles()
 
     // Establish Web Socket connection with the running background
     // process.
+    const { APP_URL, TRACK_DOWNLOAD_COMPLETION } = process.env
 
-    const {
-      publicRuntimeConfig: {
-        PUSHER_CLUSTER,
-        PUSHER_EVENT_NAME,
-        PUSHER_KEY,
-      }
-    } = getConfig()
+    this.socket = IO(APP_URL)
 
-    const pusher = new Pusher(PUSHER_KEY, {
-      cluster: PUSHER_CLUSTER,
-      forceTLS: true
-    })
-
-    const channel = pusher.subscribe('my-channel')
-
-    channel.bind(PUSHER_EVENT_NAME, ({ _id, completionPercentage, downloadLink, status }) => {
-      if (this.props.sourceFile._id !== _id) {
-        return
-      }
-
+    this.socket.on(`${TRACK_DOWNLOAD_COMPLETION}/${this.props.sourceFile._id}`, ({ completionPercentage, downloadLink, status }) => {
       this.resetQueuePosition()
 
       if (status === 'completed') {
@@ -63,6 +49,13 @@ class UnlockSourceLink extends React.Component<Props, States> {
 
       this.setState({ completionPercentage })
     })
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.monitorQueuedFilesInterval)
+
+    // Close socket connection
+    this.socket.close()
   }
 
   private monitorQueuedFiles() {
