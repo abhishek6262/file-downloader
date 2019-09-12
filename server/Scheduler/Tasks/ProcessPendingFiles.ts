@@ -28,7 +28,7 @@ class ProcessPendingFiles extends Task {
   }
 
   private async downloadFile(file: IFileDocument) {
-    const { publicRuntimeConfig: { APP_NAME, APP_URL }, serverRuntimeConfig: { MAX_FAILED_ATTEMPTS } } = getConfig()
+    const { publicRuntimeConfig: { APP_NAME, TRACK_DOWNLOAD_COMPLETION }, serverRuntimeConfig: { MAX_FAILED_ATTEMPTS } } = getConfig()
 
     const downloadDIR  = 'static/downloads'
     const downloadPath = Path.resolve(__dirname, './../../../' + downloadDIR)
@@ -50,16 +50,11 @@ class ProcessPendingFiles extends Task {
           }
         }
 
-        // Limit the data being sent via web socket to avoid charges by
-        // the third-party apps providing the web socket service.
-        if (completionPercentage.toFixed(0) % 5 === 0) {
-          WebSocket.broadcast('my-channel', {
-            _id: file._id,
-            completionPercentage: completionPercentage.toFixed(2),
-            downloadLink: file.downloadLink,
-            status,
-          })
-        }
+        WebSocket.broadcast(`${TRACK_DOWNLOAD_COMPLETION}/${file._id}`, {
+          completionPercentage: completionPercentage.toFixed(2),
+          downloadLink: file.downloadLink,
+          status,
+        })
       })
     } catch (err) {
       const failedAttempts = file.failedAttempts + 1

@@ -1,41 +1,29 @@
-import getConfig from 'next/config'
-import Pusher from 'pusher'
+import { Server } from 'http'
+import IO, { Socket } from 'socket.io'
 
 class WebSocket {
-  private static connection: Pusher = undefined
-  private static eventName: string = ''
+  private static socket: Socket = undefined
 
   private constructor() { }
 
   public static broadcast(channel: string, data: any) {
-    const { connection, eventName } = this.getConnection()
+    const socket = this.getSocket()
 
-    connection.trigger(channel, eventName, data)
+    socket.emit(channel, data)
   }
 
-  private static config() {
-    const { publicRuntimeConfig, serverRuntimeConfig } = getConfig()
-
-    const config = {
-      cluster: publicRuntimeConfig.PUSHER_CLUSTER,
-      eventName: publicRuntimeConfig.PUSHER_EVENT_NAME,
-      key: publicRuntimeConfig.PUSHER_KEY,
-      appId: serverRuntimeConfig.PUSHER_APP_ID,
-      secret: serverRuntimeConfig.PUSHER_SECRET,
+  private static getSocket(): Socket {
+    if (this.socket === undefined) {
+      throw new Error('Please prepare the web socket server.')
     }
 
-    return config
+    return this.socket
   }
 
-  private static getConnection(): { connection: Pusher, eventName: string } {
-    if (this.connection === undefined || this.eventName.length < 1) {
-      const config = this.config()
+  public static prepare(server: Server) {
+    const io = IO(server)
 
-      this.eventName = config.eventName
-      this.connection = new Pusher(config)
-    }
-
-    return { connection: this.connection, eventName: this.eventName }
+    io.on('connection', socket => this.socket = socket)
   }
 }
 

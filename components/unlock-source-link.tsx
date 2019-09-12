@@ -1,5 +1,5 @@
 import getConfig from 'next/config'
-import Pusher from 'pusher-js'
+import IO from 'socket.io-client'
 import React from 'react'
 import { countSourceFiles } from '../server/api'
 import ISourceFile from '../server/Source/interface/ISourceFile'
@@ -18,6 +18,7 @@ interface States {
 
 class UnlockSourceLink extends React.Component<Props, States> {
   private monitorQueuedFilesInterval: NodeJS.Timeout
+  private socket: SocketIOClient.Socket
 
   constructor(props: Props) {
     super(props)
@@ -31,30 +32,16 @@ class UnlockSourceLink extends React.Component<Props, States> {
     this.resetQueuePosition = this.resetQueuePosition.bind(this)
 
     this.monitorQueuedFilesInterval = this.monitorQueuedFiles()
+  }
 
+  componentDidMount() {
     // Establish Web Socket connection with the running background
     // process.
+    const { publicRuntimeConfig: { APP_URL, TRACK_DOWNLOAD_COMPLETION } } = getConfig()
 
-    const {
-      publicRuntimeConfig: {
-        PUSHER_CLUSTER,
-        PUSHER_EVENT_NAME,
-        PUSHER_KEY,
-      }
-    } = getConfig()
+    this.socket = IO(APP_URL)
 
-    const pusher = new Pusher(PUSHER_KEY, {
-      cluster: PUSHER_CLUSTER,
-      forceTLS: true
-    })
-
-    const channel = pusher.subscribe('my-channel')
-
-    channel.bind(PUSHER_EVENT_NAME, ({ _id, completionPercentage, downloadLink, status }) => {
-      if (this.props.sourceFile._id !== _id) {
-        return
-      }
-
+    this.socket.on(`${TRACK_DOWNLOAD_COMPLETION}/${this.props.sourceFile._id}`, ({ completionPercentage, downloadLink, status }) => {
       this.resetQueuePosition()
 
       if (status === 'completed') {
@@ -63,6 +50,11 @@ class UnlockSourceLink extends React.Component<Props, States> {
 
       this.setState({ completionPercentage })
     })
+  }
+
+  // close socket connection
+  componentWillUnmount() {
+    this.socket.close()
   }
 
   private monitorQueuedFiles() {
