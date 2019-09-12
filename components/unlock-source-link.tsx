@@ -8,7 +8,6 @@ import NewSourceLink from './new-source-link'
 
 interface Props {
   handleSourceFileUnlockSuccess: Function
-  handleSourceFileUpdate: Function
   sourceFile: ISourceFile
 }
 
@@ -109,10 +108,7 @@ class UnlockSourceLink extends React.Component<Props, States> {
     if (this.props.sourceFile.downloadLink.length > 0) {
       content = <NewSourceLink sourceFile={this.props.sourceFile} />
     } else {
-      content = <EmailNotification
-                  handleSourceFileUpdate={this.props.handleSourceFileUpdate}
-                  sourceFile={this.props.sourceFile}
-                />
+      content = <EmailNotification sourceFile={this.props.sourceFile} />
     }
 
     return (

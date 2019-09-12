@@ -47,7 +47,6 @@ class Home extends React.Component<Props, States> {
 
     if (this.state.sourceFile.status === 'pending') {
       content = <UnlockSourceLink
-                  handleSourceFileUpdate={this.handleSourceFileUpdate}
                   handleSourceFileUnlockSuccess={this.handleSourceFileUnlockSuccess}
                   sourceFile={this.state.sourceFile}
                 />

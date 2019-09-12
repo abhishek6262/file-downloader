@@ -4,16 +4,33 @@ import EmailUpdateForm from './email-update-form'
 import EmailUpdateSuccess from './email-update-success'
 
 interface Props {
-  handleSourceFileUpdate: Function
   sourceFile: ISourceFile
 }
 
-class EmailNotification extends React.Component<Props> {
+interface States {
+  emailExists: boolean
+}
+
+class EmailNotification extends React.Component<Props, States> {
+  constructor(props: Props) {
+    super(props)
+
+    this.state = {
+      emailExists: props.sourceFile.email !== undefined && props.sourceFile.email.length > 0
+    }
+
+    this.handleEmailUpdateSuccess = this.handleEmailUpdateSuccess.bind(this)
+  }
+
+  private handleEmailUpdateSuccess() {
+    this.setState({ emailExists: true })
+  }
+
   render() {
-    return this.props.sourceFile.email.length > 0
+    return this.state.emailExists
       ? <EmailUpdateSuccess />
       : <EmailUpdateForm
-          handleEmailUpdateSuccess={this.props.handleSourceFileUpdate}
+          handleEmailUpdateSuccess={this.handleEmailUpdateSuccess}
           sourceFile={this.props.sourceFile}
         />
   }
