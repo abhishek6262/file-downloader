@@ -3,11 +3,12 @@ import Pusher from 'pusher-js'
 import React from 'react'
 import { countSourceFiles } from '../server/api'
 import ISourceFile from '../server/Source/interface/ISourceFile'
+import EmailNotification from './EmailNotification/email-notification'
 import NewSourceLink from './new-source-link'
-import EmailNotification from './email-notification'
 
 interface Props {
   handleSourceFileUnlockSuccess: Function
+  handleSourceFileUpdate: Function
   sourceFile: ISourceFile
 }
 
@@ -108,7 +109,10 @@ class UnlockSourceLink extends React.Component<Props, States> {
     if (this.props.sourceFile.downloadLink.length > 0) {
       content = <NewSourceLink sourceFile={this.props.sourceFile} />
     } else {
-      content = <EmailNotification sourceFile={this.props.sourceFile} />
+      content = <EmailNotification
+                  handleSourceFileUpdate={this.props.handleSourceFileUpdate}
+                  sourceFile={this.props.sourceFile}
+                />
     }
 
     return (
