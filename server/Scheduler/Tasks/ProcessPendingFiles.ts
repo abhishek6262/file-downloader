@@ -28,7 +28,8 @@ class ProcessPendingFiles extends Task {
   }
 
   private async downloadFile(file: IFileDocument) {
-    const { publicRuntimeConfig: { APP_NAME, TRACK_DOWNLOAD_COMPLETION }, serverRuntimeConfig: { MAX_FAILED_ATTEMPTS } } = getConfig()
+    const { serverRuntimeConfig: { MAX_FAILED_ATTEMPTS } } = getConfig()
+    const { APP_NAME, TRACK_DOWNLOAD_COMPLETION } = process.env
 
     const downloadDIR  = 'static/downloads'
     const downloadPath = Path.resolve(__dirname, './../../../' + downloadDIR)

@@ -1,4 +1,3 @@
-import getConfig from 'next/config'
 import React from 'react'
 import Head from 'next/head'
 import ISourceFile from '../server/Source/interface/ISourceFile'
@@ -62,7 +61,7 @@ class Home extends React.Component<Props, States> {
                 />
     }
 
-    const { publicRuntimeConfig: { APP_NAME } } = getConfig()
+    const { APP_NAME } = process.env
 
     return (
       <>

@@ -1,4 +1,3 @@
-import getConfig from 'next/config'
 import IO from 'socket.io-client'
 import React from 'react'
 import { countSourceFiles } from '../server/api'
@@ -37,7 +36,7 @@ class UnlockSourceLink extends React.Component<Props, States> {
 
     // Establish Web Socket connection with the running background
     // process.
-    const { publicRuntimeConfig: { APP_URL, TRACK_DOWNLOAD_COMPLETION } } = getConfig()
+    const { APP_URL, TRACK_DOWNLOAD_COMPLETION } = process.env
 
     this.socket = IO(APP_URL)
 
