@@ -1,3 +1,4 @@
+import getConfig from 'next/config'
 import React from 'react'
 import Head from 'next/head'
 import ISourceFile from '../server/Source/interface/ISourceFile'
@@ -61,10 +62,12 @@ class Home extends React.Component<Props, States> {
                 />
     }
 
+    const { publicRuntimeConfig: { APP_NAME } } = getConfig()
+
     return (
       <>
         <Head>
-          <title>{ process.env.APP_NAME } - Generate Non-Capped, Non-Expiring and Resumable Links</title>
+          <title>{ APP_NAME } - Generate Non-Capped, Non-Expiring and Resumable Links</title>
         </Head>
 
         <div id="main" className="site-content bg-fixed bg-gray-900">
