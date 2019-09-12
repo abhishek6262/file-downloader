@@ -22,7 +22,7 @@ class EmailUpdateForm extends React.Component<Props, States> {
     super(props)
 
     this.state = {
-      email: props.sourceFile.email,
+      email: props.sourceFile.email ? props.sourceFile.email : '',
       errorMessage: '',
       isProcessing: false,
     }

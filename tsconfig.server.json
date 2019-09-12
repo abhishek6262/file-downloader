@@ -8,6 +8,6 @@
     "noEmit": false
   },
   "include": [
-    "app/**/*.ts"
+    "server/**/*.ts"
   ]
 }
