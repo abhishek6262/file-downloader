@@ -43,7 +43,7 @@ class ProcessPendingFiles extends Task {
           file = await FileModel.findOneAndUpdate({ _id: file._id }, { filePath, status, updatedAt: new Date }, { new: true })
 
           if (file.email.length > 0) {
-            const downloadLink = APP_URL + '/' + file.filePath
+            const downloadLink = file.downloadLink
             const message = `Hello,<br><br>Thanks for using our service. We have successfully generated a safe, resumable and light-speed download link for you. You can start your download right away by clicking on the link below.<br><br><a href="${downloadLink}" target="_blank">${downloadLink}</a><br><br>Happy Converting.<br><br>Regards,<br>${APP_NAME}.`
 
             await Mailer.send(file.email, APP_NAME + ' - Download Completed', message)
@@ -53,12 +53,10 @@ class ProcessPendingFiles extends Task {
         // Limit the data being sent via web socket to avoid charges by
         // the third-party apps providing the web socket service.
         if (completionPercentage.toFixed(0) % 5 === 0) {
-          const downloadLink = APP_URL + '/' + filePath
-
           WebSocket.broadcast('my-channel', {
             _id: file._id,
             completionPercentage: completionPercentage.toFixed(2),
-            downloadLink,
+            downloadLink: file.downloadLink,
             status,
           })
         }

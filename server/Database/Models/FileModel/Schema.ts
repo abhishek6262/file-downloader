@@ -1,5 +1,6 @@
-import getConfig from 'next/config'
 import { Schema } from 'mongoose'
+import getConfig from 'next/config'
+import Path from 'path'
 
 const FileSchema = new Schema({
   name: { type: String, required: true },
@@ -21,7 +22,9 @@ FileSchema.virtual('downloadLink').get(function () {
 
   const { publicRuntimeConfig: { APP_URL } } = getConfig()
 
-  return APP_URL + '/' + this.filePath
+  let fileName = Path.basename(this.filePath)
+
+  return APP_URL + '/d?file=' + fileName
 })
 
 FileSchema.set('toJSON', { virtuals: true })
