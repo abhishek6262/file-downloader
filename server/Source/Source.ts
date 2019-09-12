@@ -58,13 +58,10 @@ export default class Source {
   }
 
   static async downloadFile(sourceLink: string, downloadPath: string, monitorDownloadProcess: CallableFunction) {
-    let fileName = Path.basename(Url.parse(sourceLink).pathname)
-    let fileExtension = Path.extname(fileName)
+    const { type } = await this.getFileInfo(sourceLink)
 
-    if (fileExtension.length < 1) {
-      const { type } = await this.getFileInfo(sourceLink)
-      fileExtension = Mime.getExtension(type)
-    }
+    const fileExtension = Mime.getExtension(type)
+    let fileName = Path.basename(Url.parse(sourceLink).pathname)
 
     // Generate a unique file name so it does not conflict with others
     // present in the same directory.
