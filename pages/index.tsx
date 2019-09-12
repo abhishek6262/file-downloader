@@ -61,12 +61,10 @@ class Home extends React.Component<Props, States> {
                 />
     }
 
-    const { APP_NAME } = process.env
-
     return (
       <>
         <Head>
-          <title>{ APP_NAME } - Generate Non-Capped, Non-Expiring and Resumable Links</title>
+          <title>{ process.env.APP_NAME } - Generate Non-Capped, Non-Expiring and Resumable Links</title>
         </Head>
 
         <div id="main" className="site-content bg-fixed bg-gray-900">

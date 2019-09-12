@@ -36,11 +36,9 @@ class UnlockSourceLink extends React.Component<Props, States> {
 
     // Establish Web Socket connection with the running background
     // process.
-    const { APP_URL, TRACK_DOWNLOAD_COMPLETION } = process.env
+    this.socket = IO(process.env.APP_URL)
 
-    this.socket = IO(APP_URL)
-
-    this.socket.on(`${TRACK_DOWNLOAD_COMPLETION}/${this.props.sourceFile._id}`, ({ completionPercentage, downloadLink, status }) => {
+    this.socket.on(`${process.env.TRACK_DOWNLOAD_COMPLETION}/${this.props.sourceFile._id}`, ({ completionPercentage, downloadLink, status }) => {
       this.resetQueuePosition()
 
       if (status === 'completed') {
