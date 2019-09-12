@@ -30,11 +30,11 @@ class UnlockSourceLink extends React.Component<Props, States> {
 
     this.monitorQueuedFiles = this.monitorQueuedFiles.bind(this)
     this.resetQueuePosition = this.resetQueuePosition.bind(this)
-
-    this.monitorQueuedFilesInterval = this.monitorQueuedFiles()
   }
 
   componentDidMount() {
+    this.monitorQueuedFilesInterval = this.monitorQueuedFiles()
+
     // Establish Web Socket connection with the running background
     // process.
     const { publicRuntimeConfig: { APP_URL, TRACK_DOWNLOAD_COMPLETION } } = getConfig()
@@ -52,8 +52,10 @@ class UnlockSourceLink extends React.Component<Props, States> {
     })
   }
 
-  // close socket connection
   componentWillUnmount() {
+    clearInterval(this.monitorQueuedFilesInterval)
+
+    // Close socket connection
     this.socket.close()
   }
 
