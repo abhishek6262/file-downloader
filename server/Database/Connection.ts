@@ -7,17 +7,12 @@ class Connection {
   private constructor() { }
 
   private static config() {
-    const { serverRuntimeConfig } = getConfig()
+    const { serverRuntimeConfig: { MONGO_DB_NAME, MONGO_DSN } } = getConfig()
 
-    const MONGO_DB_NAME = serverRuntimeConfig.MONGO_DB_NAME
-    const MONGO_DSN     = serverRuntimeConfig.MONGO_DSN
-
-    const config = {
+    return {
       MONGO_DB_NAME,
       MONGO_DSN,
     }
-
-    return config
   }
 
   static async create(): Promise<typeof mongoose> {
