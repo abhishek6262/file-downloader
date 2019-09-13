@@ -4,6 +4,7 @@ import Head from 'next/head'
 import ISourceFile from '../server/Source/interface/ISourceFile'
 import SOURCE_FILE_STUB from '../server/Source/Stub'
 import FileMetaInfo from '../components/file-meta-info'
+import Navbar from '../components/navbar'
 import UnlockSourceLink from '../components/unlock-source-link'
 import VerifySourceLink from '../components/verify-source-link'
 
@@ -72,11 +73,21 @@ class Home extends React.Component<Props, States> {
 
         <div id="main" className="site-content bg-fixed bg-gray-900">
           <div className="container mx-auto">
-            <div className="flex items-center min-h-screen p-5">
-              <div className="entry-content w-full md:w-2/3 mx-auto">
-                <h1 className="mb-4 text-3xl text-white">Generate <span className="font-bold italic text-orange-300">Non-Capped</span>,<br /><span className="font-bold italic text-orange-300">Non-Expiring</span>, <span className="font-bold italic text-orange-300">Resumable Links</span>.<br />For Your <span className="italic text-orange-300 font-bold">Downloads</span>.</h1>
+            <div className="relative min-h-screen z-10">
+              <div>
+                <Navbar scheme="transparent" />
+              </div>
 
-                {content}
+              <div className="mt-8 lg:mt-16 p-5">
+                <div className="w-full md:w-2/3 mx-auto">
+                  <h1 className="mb-4 text-3xl text-white">Generate <span className="font-bold italic text-orange-300">Non-Capped</span>,<br /><span className="font-bold italic text-orange-300">Non-Expiring</span>, <span className="font-bold italic text-orange-300">Resumable Links</span>.<br />For Your <span className="italic text-orange-300 font-bold">Downloads</span>.</h1>
+
+                  {content}
+                </div>
+              </div>
+
+              <div className="lg:absolute bottom-0 right-0 p-5 text-center">
+                <p className="text-gray-200">Photo Credit <a className="font-semibold text-yellow-500" href="https://unsplash.com/@touann" target="_blank">Touann Gatouillat Vergos</a>.</p>
               </div>
             </div>
           </div>
@@ -84,7 +95,7 @@ class Home extends React.Component<Props, States> {
 
         <style jsx>{`
           .site-content {
-            background-image: url('https://images.unsplash.com/photo-1566716272480-fd1ecb90e5f7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1534&q=80');
+            background-image: url('https://images.unsplash.com/photo-1568383694497-a06983132aa9?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=touann-gatouillat-vergos-kCo-zEqc9IY-unsplash.jpg');
             background-position: center center;
             background-size: cover;
             position: relative;
@@ -99,10 +110,6 @@ class Home extends React.Component<Props, States> {
             left: 0;
             right: 0;
             top: 0;
-          }
-
-          .entry-content {
-            z-index: 1;
           }
         `}</style>
       </>
