@@ -1,4 +1,3 @@
-import Axios from 'axios'
 import Fs from 'fs'
 import Mime from 'mime'
 import Path from 'path'
@@ -24,27 +23,30 @@ export default class Source {
   }
 
   static async getFileInfo(sourceLink: string): Promise<ISourceFile> {
-    try {
-      const res     = await Axios.head(sourceLink)
-      const resType = res.headers['content-type'].split('/')[0]
+    return new Promise((resolve, reject) => {
+      Request.head(sourceLink)
+      .on('error', () => {
+        reject(this.ERROR_NO_SOURCE)
+      })
+      .on('response', res => {
+        const resType = res.headers['content-type'].split('/')[0]
 
-      if (res.status !== 200 || resType === 'text') {
-        throw new Error(this.ERROR_NO_SOURCE)
-      }
+        if (res.statusCode !== 200 || resType === 'text') {
+          reject(this.ERROR_NO_SOURCE)
+        }
 
-      const fileName = Path.basename(Url.parse(sourceLink).pathname)
-      const fileSize = res.headers['content-length'] / 1000 // Bytes to KB
-      const fileType = res.headers['content-type']
+        const fileName = Path.basename(Url.parse(sourceLink).pathname)
+        const fileSize = parseInt(res.headers['content-length']) / 1000 // Bytes to KB
+        const fileType = res.headers['content-type']
 
-      return {
-        name: fileName,
-        size: fileSize,
-        sourceLink: sourceLink,
-        type: fileType,
-      }
-    } catch (err) {
-      throw new Error(this.ERROR_NO_SOURCE)
-    }
+        resolve({
+          name: fileName,
+          size: fileSize,
+          sourceLink: sourceLink,
+          type: fileType,
+        })
+      })
+    })
   }
 
   static async fileExists(sourceLink: string): Promise<boolean> {
