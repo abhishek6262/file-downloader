@@ -3,8 +3,8 @@ const withCSS = require("@zeit/next-css")
 module.exports = withCSS({
   publicRuntimeConfig: {
     // This will be available on both server and client
-    APP_NAME: 'Resume.io',
-    APP_URL: 'http://localhost:3000',
+    APP_NAME: 'Links.io',
+    APP_URL: 'https://links-io.herokuapp.com',
     TRACK_DOWNLOAD_COMPLETION: 'process-completion',
   },
 
